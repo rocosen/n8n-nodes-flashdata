@@ -33,11 +33,11 @@ After npm publication and a clean install test, sign in to [n8n Creator Portal](
 - Package: `n8n-nodes-flashdata`
 - Repository: `https://github.com/flashdata-dev/n8n-nodes-flashdata`
 - Website: `https://flashdata.dev`
-- Description: `Google search results, YouTube video discovery, metadata, and timestamped transcripts for research and automation workflows.`
+- Description: `Google Search, News, Images, Shopping, Videos and Places; YouTube search, metadata, transcripts, captions, license labels, channels, autocomplete and async cloud downloads.`
 - Authentication: one FlashData API key; the connection test is non-billable.
 - Service: FlashData, with one account and API contract. Google and YouTube are data sources exposed through that service.
-- Runtime: declarative HTTP API node, no external runtime dependencies, no filesystem or environment-variable access, MIT license, English documentation.
-- Examples: three importable JSON workflows in this repository.
+- Runtime: programmatic HTTP API node (completed jobs require authenticated reads and an anonymous signed-result fetch), no external runtime dependencies, no filesystem or environment-variable access, MIT license, English documentation.
+- Examples: 15 source-specific task workflows plus three older examples in this repository.
 
 Follow the current portal form. Supply reviewer access only through the portal's appropriate private mechanism if requested. Record submission date, receipt, review feedback, and the actual public listing URL in the GTM task. npm publication alone is not n8n verification.
 
@@ -51,3 +51,12 @@ Checked October 8, 2026:
 - [Submit community nodes](https://docs.n8n.io/connect/create-nodes/deploy-your-node/submit-community-nodes)
 - [Official publish workflow](https://github.com/n8n-io/n8n-nodes-starter/blob/master/.github/workflows/publish.yml)
 - [npm trusted publishing](https://docs.npmjs.com/trusted-publishers)
+
+
+## Updating the pending 0.1.2 application
+
+The Creator Portal was checked on October 12, 2026: Automated Review Complete; Manual Review Under Review. That screen offers no version/video edit action. Publish a validated new package with provenance, then recheck the same application. Do not create a duplicate submission or label the old video as a 0.2.0 demonstration. If the portal still has no update path, ask n8n through its documented support route after obtaining authorization to send that message.
+
+## Template submission requirements checked October 12, 2026
+
+[Official guidelines](https://n8n.notion.site/Template-submission-guidelines-9959894476734da3b402c90b124b1f77) require clear English task titles, practical original workflows, setup variables, and a sticky note containing the description. Community-node templates must say self-hosted only and include a workflow image at the top. Each file in `workflows/capabilities` has its own description and diagram. The portal starts with JSON upload, a free/paid choice, and agreement to template Terms; AI review precedes human review. The template agreement has not yet been accepted in this task. Track actual per-template submission receipts and public URLs in GTM.

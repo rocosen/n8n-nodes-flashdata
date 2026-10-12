@@ -23,6 +23,15 @@ export class FlashdataApi implements ICredentialType {
 			required: true,
 			default: '',
 		},
+		{
+			displayName: 'Download Storage JSON',
+			name: 'downloadStorageSecret',
+			type: 'string',
+			typeOptions: { password: true },
+			default: '',
+			description:
+				'Optional for research queries. For downloads, enter the customer storage object from the FlashData download guide (provider, bucket and scoped write credentials). Stored encrypted in this credential; never put secrets in workflow fields.',
+		},
 	];
 	authenticate: IAuthenticateGeneric = {
 		type: 'generic',

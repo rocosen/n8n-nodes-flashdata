@@ -1,0 +1,163 @@
+{
+  "name": "Export timestamped YouTube transcripts to WebVTT with FlashData",
+  "active": false,
+  "nodes": [
+    {
+      "id": "7897ddf7-ce34-535a-b936-ee74178db0c4",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        320
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "41d02b97-f395-559d-bee0-fbb1ea21fa3a",
+      "name": "Configure task",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        320
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"video_url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n  \"language\": \"en\"\n}",
+        "options": {}
+      }
+    },
+    {
+      "id": "51533bc0-d451-5f43-afa4-036a82b69e9e",
+      "name": "Fetch youtube transcript",
+      "type": "n8n-nodes-flashdata.flashdata",
+      "typeVersion": 1,
+      "position": [
+        500,
+        320
+      ],
+      "parameters": {
+        "resource": "youtube",
+        "operation": "getTranscript",
+        "videoId": "={{$json.video_url}}",
+        "language": "={{$json.language}}",
+        "auto": true
+      }
+    },
+    {
+      "id": "6f54ca2f-e4f3-5652-8ae8-6b8a47bc7046",
+      "name": "Prepare output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        320
+      ],
+      "parameters": {
+        "jsCode": "const envelope=$input.first().json; const result=envelope.results?.[0] ?? {}; const settings=$('Configure task').first().json;\nconst stamp=(seconds,separator)=>{const ms=Math.max(0,Math.round(Number(seconds)*1000));return String(Math.floor(ms/3600000)).padStart(2,'0')+':'+String(Math.floor(ms/60000)%60).padStart(2,'0')+':'+String(Math.floor(ms/1000)%60).padStart(2,'0')+separator+String(ms%1000).padStart(3,'0');};\nconst segments=result.segments ?? []; if(!segments.length) throw new Error('No subtitle segments returned for this track. Choose an available language and caption type.'); const content='WEBVTT\\n\\n'+segments.map((s,i)=>String(i+1)+'\\n'+stamp(s.start,'.')+' --> '+stamp(s.end,'.')+'\\n'+String(s.text).replace(/\\r?\\n\\r?\\n/g,'\\n')).join('\\n\\n')+'\\n';return [{json:{content,segment_count:segments.length}}];"
+      }
+    },
+    {
+      "id": "4ac33f2d-9685-5b9d-a142-b10d2e9423f4",
+      "name": "Export file",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1020,
+        320
+      ],
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "content",
+        "options": {
+          "fileName": "youtube-subtitles.vtt"
+        }
+      }
+    },
+    {
+      "id": "a1b334d4-b225-5c3e-b5d3-43d31fb7db47",
+      "name": "About this workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -400
+      ],
+      "parameters": {
+        "content": "# Export timestamped YouTube transcripts to WebVTT with FlashData\n\n## Who this is for\n\nDevelopers and researchers who want to convert existing timestamped subtitle segments into a portable VTT subtitle file for your research or editing pipeline.\n\n## What it does\n\nConvert existing timestamped subtitle segments into a portable VTT subtitle file for your research or editing pipeline. The workflow keeps the source context and produces a downloadable TEXT artifact inside n8n. It does not send data to an external spreadsheet or messaging account.\n\n## Setup\n\n1. Self-hosted n8n only while this community node awaits verification. Install `n8n-nodes-flashdata` version 0.2.0 or later.\n2. Create a FlashData account, enable this source, and select your FlashData API credential on the data nodes.\n3. Edit **Configure task**, then execute manually and inspect **Prepare output** before downloading **Export file**.\n\n## Requirements and customization\n\nFlashData queries consume Credits; the template itself is free. Select a language actually available on the video. Automatic captions are selected by default. No ASR, translation, or fallback to another track occurs. Adjust the task inputs and transformation for your own dataset. An empty matching track stops before export; choose an available track. Treat retrieved titles, descriptions and links as external data.\n\n[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_transcript?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_transcript-template) \u00b7 [Current pricing](https://flashdata.dev/pricing)",
+        "width": 1100,
+        "height": 630,
+        "color": 5
+      }
+    },
+    {
+      "id": "8af08547-59a2-5420-b19a-bd4f929218cb",
+      "name": "Run and inspect",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        620
+      ],
+      "parameters": {
+        "content": "## Execution\nConfigure inputs \u2192 select FlashData credentials \u2192 run manually \u2192 inspect output \u2192 download the file.\n\nQueries cost Credits. Retry a job read safely; do not automatically retry paid submissions.",
+        "width": 1100,
+        "height": 190,
+        "color": 7
+      }
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Configure task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configure task": {
+      "main": [
+        [
+          {
+            "node": "Fetch youtube transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch youtube transcript": {
+      "main": [
+        [
+          {
+            "node": "Prepare output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare output": {
+      "main": [
+        [
+          {
+            "node": "Export file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC"
+  },
+  "pinData": {},
+  "tags": []
+}

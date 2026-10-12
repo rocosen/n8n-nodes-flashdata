@@ -12,7 +12,42 @@
 		"primaryDocumentation": [
 			{
 				"url": "https://github.com/flashdata-dev/n8n-nodes-flashdata"
+			},
+			{
+				"url": "https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-node-docs"
 			}
 		]
-	}
+	},
+	"alias": [
+		"google search",
+		"google serp",
+		"google news",
+		"news search",
+		"google images",
+		"image search",
+		"google shopping",
+		"product search",
+		"google video search",
+		"video serp",
+		"google places",
+		"local business search",
+		"youtube search",
+		"youtube video search",
+		"youtube extended search",
+		"youtube search 700 results",
+		"youtube metadata",
+		"youtube video chapters",
+		"youtube transcript",
+		"youtube subtitles",
+		"youtube captions",
+		"youtube manual captions",
+		"youtube trainability",
+		"youtube creative commons license metadata",
+		"youtube channel data",
+		"youtube channel videos",
+		"youtube autocomplete",
+		"youtube search suggestions",
+		"youtube download",
+		"youtube to s3"
+	]
 }

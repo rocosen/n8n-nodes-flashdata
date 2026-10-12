@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 (2026-10-12)
+
+- Cover all 15 Google/YouTube sources, with source-specific operations and 30 search aliases.
+- Add encrypted download destination configuration, async submission and safe status/result reads without forwarding API keys to storage.
+- Preserve original node/credential IDs, four operation values, per-item expressions and full response envelopes.
+- Add 15 independent task workflows with exportable artifacts, setup notes, diagrams and source-specific FlashData links.
+- Validate extended limits, caption defaults, search filters, storage and clip settings; avoid automatic paid retries.
+
 ## 0.1.2 (2026-10-09)
 
 - Use the existing public npm publisher contact email for n8n package ownership verification. No runtime changes.

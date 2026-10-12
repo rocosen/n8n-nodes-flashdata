@@ -1,6 +1,10 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { normalizeVideoId, validateRequest } = require('../dist/nodes/Flashdata/request');
+const { normalizeVideoId, validateBody } = require('../dist/nodes/Flashdata/request');
+const validateRequest = async ({ body }) => {
+	validateBody(body);
+	return { body };
+};
 const context = {
 	getNode: () => ({
 		name: 'FlashData',

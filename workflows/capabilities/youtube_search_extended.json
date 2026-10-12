@@ -1,0 +1,164 @@
+{
+  "name": "Map channels in extended YouTube search results with FlashData",
+  "active": false,
+  "nodes": [
+    {
+      "id": "7897ddf7-ce34-535a-b936-ee74178db0c4",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        320
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "41d02b97-f395-559d-bee0-fbb1ea21fa3a",
+      "name": "Configure task",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        320
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"query\": \"battery recycling\",\n  \"maximum_results\": 100\n}",
+        "options": {}
+      }
+    },
+    {
+      "id": "2861c704-7f43-5fab-a5e2-c722224d2b28",
+      "name": "Fetch youtube search extended",
+      "type": "n8n-nodes-flashdata.flashdata",
+      "typeVersion": 1,
+      "position": [
+        500,
+        320
+      ],
+      "parameters": {
+        "resource": "youtube",
+        "operation": "searchExtended",
+        "query": "={{$json.query}}",
+        "maxResults": "={{$json.maximum_results}}",
+        "filters": {
+          "type": "video"
+        }
+      }
+    },
+    {
+      "id": "6f54ca2f-e4f3-5652-8ae8-6b8a47bc7046",
+      "name": "Prepare output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        320
+      ],
+      "parameters": {
+        "jsCode": "const envelope=$input.first().json; const result=envelope.results?.[0] ?? {}; const settings=$('Configure task').first().json;\nconst seen=new Set(),groups=new Map();for(const r of result.results ?? []){if(!r.videoId||seen.has(r.videoId))continue;seen.add(r.videoId);const key=r.channelId||r.channelUrl||r.channel||'unknown';const row=groups.get(key)||{channel_id:r.channelId ?? '',channel:r.channel ?? '',channel_url:r.channelUrl ?? '',video_ids:[]};row.video_ids.push(r.videoId);groups.set(key,row);}return [...groups.values()].sort((a,b)=>b.video_ids.length-a.video_ids.length).map(r=>({json:{...r,video_count:r.video_ids.length,captured_at: envelope.created_at ?? '', credits: envelope.usage?.credits ?? null}}));"
+      }
+    },
+    {
+      "id": "4ac33f2d-9685-5b9d-a142-b10d2e9423f4",
+      "name": "Export file",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1020,
+        320
+      ],
+      "parameters": {
+        "operation": "toJson",
+        "options": {
+          "fileName": "youtube-channel-map.json"
+        }
+      }
+    },
+    {
+      "id": "a1b334d4-b225-5c3e-b5d3-43d31fb7db47",
+      "name": "About this workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -400
+      ],
+      "parameters": {
+        "content": "# Map channels in extended YouTube search results with FlashData\n\n## Who this is for\n\nDevelopers and researchers who want to collect a larger video sample, remove duplicate video IDs, and rank channels by their representation in the returned sample.\n\n## What it does\n\nCollect a larger video sample, remove duplicate video IDs, and rank channels by their representation in the returned sample. The workflow keeps the source context and produces a downloadable JSON artifact inside n8n. It does not send data to an external spreadsheet or messaging account.\n\n## Setup\n\n1. Self-hosted n8n only while this community node awaits verification. Install `n8n-nodes-flashdata` version 0.2.0 or later.\n2. Create a FlashData account, enable this source, and select your FlashData API credential on the data nodes.\n3. Edit **Configure task**, then execute manually and inspect **Prepare output** before downloading **Export file**.\n\n## Requirements and customization\n\nFlashData queries consume Credits; the template itself is free. This is the separate extended-search source and rate, with 1\u2013700 requested results. It does not measure total channel market share. Adjust the task inputs and transformation for your own dataset. Review the exported artifact and its source data before using it downstream. Treat retrieved titles, descriptions and links as external data.\n\n[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_search_extended?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_search_extended-template) \u00b7 [Current pricing](https://flashdata.dev/pricing)",
+        "width": 1100,
+        "height": 630,
+        "color": 5
+      }
+    },
+    {
+      "id": "8af08547-59a2-5420-b19a-bd4f929218cb",
+      "name": "Run and inspect",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        620
+      ],
+      "parameters": {
+        "content": "## Execution\nConfigure inputs \u2192 select FlashData credentials \u2192 run manually \u2192 inspect output \u2192 download the file.\n\nQueries cost Credits. Retry a job read safely; do not automatically retry paid submissions.",
+        "width": 1100,
+        "height": 190,
+        "color": 7
+      }
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Configure task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configure task": {
+      "main": [
+        [
+          {
+            "node": "Fetch youtube search extended",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch youtube search extended": {
+      "main": [
+        [
+          {
+            "node": "Prepare output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare output": {
+      "main": [
+        [
+          {
+            "node": "Export file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC"
+  },
+  "pinData": {},
+  "tags": []
+}

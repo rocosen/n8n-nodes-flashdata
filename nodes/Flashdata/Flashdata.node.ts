@@ -1,7 +1,9 @@
+import { execute } from './execute';
 import { NodeConnectionTypes, type INodeType, type INodeTypeDescription } from 'n8n-workflow';
-import { googleSearchDescription, youtubeDescription } from './descriptions';
+import { descriptions, resourceOptions } from './descriptions';
 
 export class Flashdata implements INodeType {
+	execute = execute;
 	description: INodeTypeDescription = {
 		displayName: 'FlashData',
 		name: 'flashdata',
@@ -9,31 +11,23 @@ export class Flashdata implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Get Google search results and YouTube data with FlashData',
+		description:
+			'Google Search, News, Images, Shopping, Videos, Places; YouTube search, transcripts, captions, metadata, channels, autocomplete and downloads',
 		defaults: { name: 'FlashData' },
 		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		credentials: [{ name: 'flashdataApi', required: true }],
-		requestDefaults: {
-			baseURL: 'https://data.flashdata.dev',
-			timeout: 120000,
-			headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-		},
 		properties: [
 			{
 				displayName: 'Resource',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
-				options: [
-					{ name: 'Google Search', value: 'googleSearch' },
-					{ name: 'YouTube', value: 'youtube' },
-				],
+				options: resourceOptions,
 				default: 'googleSearch',
 			},
-			...googleSearchDescription,
-			...youtubeDescription,
+			...descriptions,
 		],
 	};
 }
