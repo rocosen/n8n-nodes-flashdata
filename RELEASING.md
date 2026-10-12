@@ -24,6 +24,10 @@ In npm package settings → Trusted Publishers, configure GitHub Actions:
 
 Remove the `NPM_TOKEN` secret and revoke its token after the publisher is configured. The workflow's `id-token: write` permission allows npm OIDC publishing and provenance. Node 24 supplies a compatible npm CLI; trusted publishing requires npm 11.5.1 or newer.
 
+The package's GitHub Actions Trusted Publisher was saved on October 12, 2026 with the scope above. It allows direct npm publish and does not grant independent dist-tag management. The workflow now uses OIDC only, with no token fallback. The initial token expired on October 10; its Actions secret was removed. npm validates a new publisher on its first successful publication.
+
+In GitHub Actions, `n8n-node release` runs lint/build and npm publish with provenance. It does not create the version tag or a GitHub Release; maintainers create the tag before the workflow and the release after registry verification.
+
 Update version and changelog, review CI, and push the matching version tag. Keep the source repository public.
 
 ## Submit to n8n

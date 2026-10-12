@@ -19,16 +19,13 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+          registry-url: 'https://registry.npmjs.org/'
+      - name: Show publishing runtime
+        run: node --version && npm --version
       - name: Check release version
         run: node -e 'if (process.env.GITHUB_REF_NAME !== "v" + require("./package.json").version) process.exit(1)'
       - run: npm ci
       - run: npm test
       - run: npm run test:integration
       - name: Publish with provenance
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ -n "$NPM_TOKEN" ]; then
-            npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
-          fi
-          npm run release
+        run: npm run release
