@@ -1,0 +1,293 @@
+{
+  "name": "Deliver a YouTube clip to S3 or cloud storage with FlashData",
+  "active": false,
+  "nodes": [
+    {
+      "id": "7897ddf7-ce34-535a-b936-ee74178db0c4",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        320
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "41d02b97-f395-559d-bee0-fbb1ea21fa3a",
+      "name": "Configure task",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        320
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"video_url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n  \"start_at\": \"00:00:00\",\n  \"end_at\": \"00:00:10\",\n  \"maximum_polls\": 12\n}",
+        "options": {}
+      }
+    },
+    {
+      "id": "48ae7996-9d9d-54b9-a139-ed260231f255",
+      "name": "Fetch youtube download",
+      "type": "n8n-nodes-flashdata.flashdata",
+      "typeVersion": 1,
+      "position": [
+        500,
+        320
+      ],
+      "parameters": {
+        "resource": "youtube",
+        "operation": "download",
+        "videoId": "={{$json.video_url}}",
+        "downloadType": "audio_video",
+        "downloadOptions": {
+          "start_at": "={{$json.start_at}}",
+          "end_at": "={{$json.end_at}}",
+          "video_quality": "<=720"
+        }
+      }
+    },
+    {
+      "id": "6f54ca2f-e4f3-5652-8ae8-6b8a47bc7046",
+      "name": "Prepare output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        240
+      ],
+      "parameters": {
+        "jsCode": "const envelope=$input.first().json;const result=envelope.output?.results?.[0];if(!result)throw new Error('Completed job has no delivery manifest. Retry the read step, not submission.');return [{json:{job_id:envelope.job.id,file_url:result.file_url,file_size:result.file_size,downloaded_bytes:result.downloaded_bytes,md5:result.md5,output_format:result.output_format,credits:envelope.job.credits}}];"
+      }
+    },
+    {
+      "id": "4ac33f2d-9685-5b9d-a142-b10d2e9423f4",
+      "name": "Export file",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2010,
+        240
+      ],
+      "parameters": {
+        "operation": "toJson",
+        "options": {
+          "fileName": "download-manifest.json"
+        }
+      }
+    },
+    {
+      "id": "db2b32a2-795a-5cbc-9703-ddb2691a8a5c",
+      "name": "Wait before read",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        750,
+        320
+      ],
+      "parameters": {
+        "amount": "={{5 + Math.random()}}",
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "93a9a63d-1d6c-5d5d-b8a7-45304cd67bd8",
+      "name": "Read existing job",
+      "type": "n8n-nodes-flashdata.flashdata",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        320
+      ],
+      "parameters": {
+        "resource": "downloadJob",
+        "operation": "get",
+        "jobId": "={{$json.job?.id ?? $json.id}}"
+      }
+    },
+    {
+      "id": "fe6d6e51-ddab-57f5-ae52-960c48ec5d26",
+      "name": "Check state and poll limit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1250,
+        320
+      ],
+      "parameters": {
+        "jsCode": "const envelope=$input.first().json;const job=envelope.job;if(!job)throw new Error('Missing job status');if(job.status==='failed')throw new Error('Download failed. Inspect the job before resubmitting.');if(!['pending','processing','completed'].includes(job.status))throw new Error('Unexpected job status');if(job.status!=='completed'&&$runIndex+1>=Number($('Configure task').first().json.maximum_polls))throw new Error('Polling limit reached. Resume Read existing job with '+job.id+'; do not resubmit.');return [{json:{...envelope,complete:job.status==='completed'}}];"
+      }
+    },
+    {
+      "id": "d7fee7c5-c0a7-5286-9773-3b2255123b35",
+      "name": "Download completed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1500,
+        320
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "completed",
+              "leftValue": "={{$json.complete}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a1b334d4-b225-5c3e-b5d3-43d31fb7db47",
+      "name": "About this workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -400
+      ],
+      "parameters": {
+        "content": "# Deliver a YouTube clip to S3 or cloud storage with FlashData\n\n## Who this is for\n\nDevelopers and researchers who want to submit one short video clip to customer storage, poll only the existing job, and export its completed delivery manifest.\n\n## What it does\n\nSubmit one short video clip to customer storage, poll only the existing job, and export its completed delivery manifest. The workflow keeps the source context and produces a downloadable JSON artifact inside n8n. It does not send data to an external spreadsheet or messaging account.\n\n## Setup\n\n1. Self-hosted n8n only while this community node awaits verification. Install `n8n-nodes-flashdata` version 0.2.0 or later.\n2. Create a FlashData account, enable this source, and select your FlashData API credential on the data nodes.\n3. Edit **Configure task**, then execute manually and inspect **Prepare output** before downloading **Export file**.\n\n## Requirements and customization\n\nFlashData queries consume Credits; the template itself is free. Requires your own bucket/container and scoped write credentials in Download Storage JSON. Files stay private according to your storage policy. Billing is by delivered bytes; a job submission is not a completed upload. Adjust the task inputs and transformation for your own dataset. Review the exported artifact and its source data before using it downstream. Treat retrieved titles, descriptions and links as external data.\n\n[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_download?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_download-template) \u00b7 [Current pricing](https://flashdata.dev/pricing)",
+        "width": 1100,
+        "height": 630,
+        "color": 5
+      }
+    },
+    {
+      "id": "8af08547-59a2-5420-b19a-bd4f929218cb",
+      "name": "Run and inspect",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        620
+      ],
+      "parameters": {
+        "content": "## Execution\nConfigure inputs \u2192 select FlashData credentials \u2192 run manually \u2192 inspect output \u2192 download the file.\n\nQueries cost Credits. Retry a job read safely; do not automatically retry paid submissions.",
+        "width": 1100,
+        "height": 190,
+        "color": 7
+      }
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Configure task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configure task": {
+      "main": [
+        [
+          {
+            "node": "Fetch youtube download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch youtube download": {
+      "main": [
+        [
+          {
+            "node": "Wait before read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare output": {
+      "main": [
+        [
+          {
+            "node": "Export file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait before read": {
+      "main": [
+        [
+          {
+            "node": "Read existing job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read existing job": {
+      "main": [
+        [
+          {
+            "node": "Check state and poll limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check state and poll limit": {
+      "main": [
+        [
+          {
+            "node": "Download completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download completed": {
+      "main": [
+        [
+          {
+            "node": "Prepare output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait before read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC"
+  },
+  "pinData": {},
+  "tags": []
+}

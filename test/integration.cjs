@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { mkdtempSync, writeFileSync, readFileSync, rmSync } = require('node:fs');
+const { mkdtempSync, writeFileSync, readFileSync, rmSync, readdirSync } = require('node:fs');
 const { tmpdir } = require('node:os');
 const { join, resolve } = require('node:path');
 const { spawnSync } = require('node:child_process');
@@ -103,7 +103,23 @@ const templateWorkflows = templateCases.map(([file, id, stopAt]) => {
 		}
 	return workflow(id, nodes.slice(1));
 });
-const workflows = [success, payment, invalid, ...templateWorkflows];
+const capabilityFiles = readdirSync('workflows/capabilities').filter(
+	(file) => file.endsWith('.json') && file !== 'catalog.json',
+);
+const capabilityWorkflows = capabilityFiles.map((file, index) => {
+	const original = JSON.parse(readFileSync(join('workflows/capabilities', file), 'utf8'));
+	original.id = 'capability' + index;
+	for (const n of original.nodes)
+		if (n.type === 'n8n-nodes-base.scheduleTrigger') delete original.connections[n.name];
+	original.nodes = original.nodes.filter((n) => n.type !== 'n8n-nodes-base.scheduleTrigger');
+	for (const n of original.nodes)
+		if (n.type === 'n8n-nodes-flashdata.flashdata') {
+			n.type = 'CUSTOM.flashdata';
+			n.credentials = { flashdataApi: { id: 'flashdata-test-key', name: 'FlashData test' } };
+		}
+	return original;
+});
+const workflows = [success, payment, invalid, ...templateWorkflows, ...capabilityWorkflows];
 writeFileSync(join(fixtures, 'workflows.json'), JSON.stringify(workflows));
 writeFileSync(
 	join(fixtures, 'credentials.json'),
@@ -112,7 +128,16 @@ writeFileSync(
 			id: 'flashdata-test-key',
 			name: 'FlashData test',
 			type: 'flashdataApi',
-			data: { apiKey: 'test-key-not-a-secret' },
+			data: {
+				apiKey: 'test-key-not-a-secret',
+				downloadStorageSecret: JSON.stringify({
+					storage_type: 's3',
+					storage_url: 'customer-bucket',
+					region: 'us-east-1',
+					access_key: 'storage-access-fixture',
+					secret_key: 'storage-secret-fixture',
+				}),
+			},
 		},
 	]),
 );
@@ -153,7 +178,7 @@ try {
 			'-c',
 			commands.join(' && '),
 		],
-		{ encoding: 'utf8', timeout: 240000 },
+		{ encoding: 'utf8', timeout: 420000 },
 	);
 	if (result.status !== 0) {
 		for (const file of ['import-credentials', 'import-workflows', ...workflows.map((w) => w.id)]) {
@@ -169,8 +194,8 @@ try {
 		.map(JSON.parse);
 	assert.equal(
 		requests.length,
-		14,
-		'Fourteen expected requests including templates; no retries or invalid requests',
+		33,
+		'Expected requests including 15 task templates, two polls, result redirect and anonymous read; no POST retries',
 	);
 	assert.deepEqual(
 		requests
@@ -233,8 +258,42 @@ try {
 				text: 'Example transcript.',
 			});
 	}
+	for (const [index, original] of capabilityWorkflows.entries()) {
+		const raw = readFileSync(join(fixtures, `${original.id}.log`), 'utf8');
+		const run = JSON.parse(raw.slice(raw.indexOf('{')));
+		assert.equal(run.status, 'success', capabilityFiles[index]);
+		const data = run.data.resultData.runData;
+		const rows = data['Prepare output'][0].data.main[0];
+		assert.ok(rows.length > 0, capabilityFiles[index]);
+		assert.ok(data['Export file'][0].data.main[0][0].binary.data, capabilityFiles[index]);
+		assert.ok(
+			!JSON.stringify(run).includes('storage-secret-fixture'),
+			'Storage secrets stay out of executions',
+		);
+		const source = capabilityFiles[index].replace('.json', '');
+		if (source === 'google_shopping') assert.equal(rows[0].json.change, 'new');
+		if (source === 'youtube_transcript')
+			assert.match(rows[0].json.content, /WEBVTT\n\n1\n00:00:00.000 --> 00:00:03.000/);
+		if (source === 'youtube_captions')
+			assert.match(rows[0].json.content, /00:00:00,000 --> 00:00:03,000/);
+		if (source === 'youtube_trainability') assert.equal(rows[0].json.creative_commons_label, true);
+		if (source === 'youtube_download') assert.equal(rows[0].json.file_size, 2048);
+	}
+	assert.equal(new Set(requests.filter((r) => r.source).map((r) => r.source)).size, 15);
+	assert.equal(
+		requests.filter((r) => r.source === 'youtube_download').length,
+		1,
+		'Polling must never resubmit the download',
+	);
+	assert.equal(requests.find((r) => r.source === 'youtube_captions').params.auto, false);
+	assert.equal(
+		requests.find((r) => r.source === 'youtube_search_extended').params.max_results,
+		100,
+	);
+	assert.equal(requests.filter((r) => r.kind === 'anonymous-result').length, 1);
+
 	console.log(
-		`PASS: n8n ${image}, four operations, per-item expressions, X-API-Key, nested params, URL normalization, paired items, payment errors, no automatic retry, validation before HTTP`,
+		`PASS: n8n ${image}, all 15 sources and exported task artifacts, per-item expressions, X-API-Key, nested params, URL normalization, paired items, payment errors, no automatic retry, validation before HTTP`,
 	);
 } finally {
 	rmSync(fixtures, { recursive: true, force: true });

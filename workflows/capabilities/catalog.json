@@ -1,0 +1,92 @@
+[
+  {
+    "source": "google_search",
+    "title": "Export Google Search SERP rankings to CSV with FlashData",
+    "filename": "google-serp.csv",
+    "kind": "csv"
+  },
+  {
+    "source": "google_news",
+    "title": "Build a Google News topic digest with FlashData",
+    "filename": "google-news-digest.md",
+    "kind": "text"
+  },
+  {
+    "source": "google_images",
+    "title": "Filter Google Images by dimensions and export source URLs with FlashData",
+    "filename": "image-sources.csv",
+    "kind": "csv"
+  },
+  {
+    "source": "google_shopping",
+    "title": "Compare Google Shopping price snapshots with FlashData",
+    "filename": "shopping-comparison.csv",
+    "kind": "csv"
+  },
+  {
+    "source": "google_videos",
+    "title": "Group Google video search results by website with FlashData",
+    "filename": "video-websites.json",
+    "kind": "json"
+  },
+  {
+    "source": "google_places",
+    "title": "Shortlist Google Places businesses by rating with FlashData",
+    "filename": "business-shortlist.csv",
+    "kind": "csv"
+  },
+  {
+    "source": "youtube_search",
+    "title": "Export YouTube video search candidates with FlashData",
+    "filename": "youtube-candidates.csv",
+    "kind": "csv"
+  },
+  {
+    "source": "youtube_search_extended",
+    "title": "Map channels in extended YouTube search results with FlashData",
+    "filename": "youtube-channel-map.json",
+    "kind": "json"
+  },
+  {
+    "source": "youtube_metadata",
+    "title": "Create a YouTube metadata and chapters brief with FlashData",
+    "filename": "youtube-metadata.md",
+    "kind": "text"
+  },
+  {
+    "source": "youtube_transcript",
+    "title": "Export timestamped YouTube transcripts to WebVTT with FlashData",
+    "filename": "youtube-subtitles.vtt",
+    "kind": "text"
+  },
+  {
+    "source": "youtube_captions",
+    "title": "Export YouTube uploader captions to SRT with FlashData",
+    "filename": "youtube-subtitles.srt",
+    "kind": "text"
+  },
+  {
+    "source": "youtube_trainability",
+    "title": "Inspect YouTube Creative Commons license labels with FlashData",
+    "filename": "license-labels.csv",
+    "kind": "csv"
+  },
+  {
+    "source": "youtube_channel",
+    "title": "Export a YouTube channel video inventory with FlashData",
+    "filename": "channel-inventory.csv",
+    "kind": "csv"
+  },
+  {
+    "source": "youtube_suggestions",
+    "title": "Build a YouTube autocomplete keyword sheet with FlashData",
+    "filename": "youtube-suggestions.csv",
+    "kind": "csv"
+  },
+  {
+    "source": "youtube_download",
+    "title": "Deliver a YouTube clip to S3 or cloud storage with FlashData",
+    "filename": "download-manifest.json",
+    "kind": "json"
+  }
+]

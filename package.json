@@ -1,18 +1,31 @@
 {
   "name": "n8n-nodes-flashdata",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "public"
   },
-  "description": "Google search results, YouTube video discovery, metadata, and transcripts for n8n workflows.",
+  "description": "Google Search, News, Images, Shopping, Places and video search; YouTube transcripts, captions, metadata, channels, autocomplete and cloud downloads for n8n.",
   "license": "MIT",
-  "homepage": "https://github.com/flashdata-dev/n8n-nodes-flashdata",
+  "homepage": "https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-package",
   "keywords": [
     "n8n-community-node-package",
     "flashdata",
     "google-search",
     "youtube",
-    "transcript"
+    "transcript",
+    "google-news",
+    "google-images",
+    "google-shopping",
+    "google-places",
+    "google-videos",
+    "youtube-search",
+    "youtube-captions",
+    "youtube-metadata",
+    "youtube-channel",
+    "youtube-autocomplete",
+    "youtube-download",
+    "serp",
+    "subtitles"
   ],
   "author": {
     "name": "flashdata-dev",

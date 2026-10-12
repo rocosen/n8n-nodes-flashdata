@@ -13,7 +13,7 @@ export class FlashdataApi implements ICredentialType {
 		light: 'file:../nodes/Flashdata/flashdata.svg',
 		dark: 'file:../nodes/Flashdata/flashdata.svg',
 	};
-	documentationUrl = 'https://github.com/flashdata-dev/n8n-nodes-flashdata#credentials';
+	documentationUrl = 'https://github.com/flashdata-dev/n8n-nodes-flashdata#credentials-and-costs';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',
@@ -22,6 +22,15 @@ export class FlashdataApi implements ICredentialType {
 			typeOptions: { password: true },
 			required: true,
 			default: '',
+		},
+		{
+			displayName: 'Download Storage JSON',
+			name: 'downloadStorageSecret',
+			type: 'string',
+			typeOptions: { password: true },
+			default: '',
+			description:
+				'Optional for research queries. For downloads, enter the customer storage object from the FlashData download guide (provider, bucket and scoped write credentials). Stored encrypted in this credential; never put secrets in workflow fields.',
 		},
 	];
 	authenticate: IAuthenticateGeneric = {

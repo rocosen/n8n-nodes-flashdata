@@ -1,3 +1,27 @@
+# FlashData task workflows
+
+All 15 source capabilities have independent, inactive workflows. Install package 0.2.0 or later on self-hosted n8n, import a JSON, select the FlashData credential, and edit Configure task. Each workflow produces a downloadable artifact without requiring a second service account.
+
+- [Export Google Search SERP rankings to CSV with FlashData](capabilities/google_search.md) · [JSON](capabilities/google_search.json)
+- [Build a Google News topic digest with FlashData](capabilities/google_news.md) · [JSON](capabilities/google_news.json)
+- [Filter Google Images by dimensions and export source URLs with FlashData](capabilities/google_images.md) · [JSON](capabilities/google_images.json)
+- [Compare Google Shopping price snapshots with FlashData](capabilities/google_shopping.md) · [JSON](capabilities/google_shopping.json)
+- [Group Google video search results by website with FlashData](capabilities/google_videos.md) · [JSON](capabilities/google_videos.json)
+- [Shortlist Google Places businesses by rating with FlashData](capabilities/google_places.md) · [JSON](capabilities/google_places.json)
+- [Export YouTube video search candidates with FlashData](capabilities/youtube_search.md) · [JSON](capabilities/youtube_search.json)
+- [Map channels in extended YouTube search results with FlashData](capabilities/youtube_search_extended.md) · [JSON](capabilities/youtube_search_extended.json)
+- [Create a YouTube metadata and chapters brief with FlashData](capabilities/youtube_metadata.md) · [JSON](capabilities/youtube_metadata.json)
+- [Export timestamped YouTube transcripts to WebVTT with FlashData](capabilities/youtube_transcript.md) · [JSON](capabilities/youtube_transcript.json)
+- [Export YouTube uploader captions to SRT with FlashData](capabilities/youtube_captions.md) · [JSON](capabilities/youtube_captions.json)
+- [Inspect YouTube Creative Commons license labels with FlashData](capabilities/youtube_trainability.md) · [JSON](capabilities/youtube_trainability.json)
+- [Export a YouTube channel video inventory with FlashData](capabilities/youtube_channel.md) · [JSON](capabilities/youtube_channel.json)
+- [Build a YouTube autocomplete keyword sheet with FlashData](capabilities/youtube_suggestions.md) · [JSON](capabilities/youtube_suggestions.json)
+- [Deliver a YouTube clip to S3 or cloud storage with FlashData](capabilities/youtube_download.md) · [JSON](capabilities/youtube_download.json)
+
+The descriptions contain input examples, source-specific limitations and corresponding FlashData API guides. Workflow images are diagrams of the exported node graph. These are repository examples; public n8n template listings are separate.
+
+## Older multi-service examples
+
 # FlashData workflow examples
 
 These workflows are inactive, contain no embedded credentials, and use the `n8n-nodes-flashdata.flashdata` node. Install the package before importing them. During the source preview, use the development instance and select its FlashData node if the loader uses a different local type name.
