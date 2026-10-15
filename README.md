@@ -15,7 +15,7 @@ Search Google, monitor news, collect image and shopping results, find local busi
 
 | Source / search intent | Task workflow and setup | API guide |
 | --- | --- | --- |
-| Google Search | [Find Google Search ranking gaps against competitors with FlashData](workflows/capabilities/google_search.md) · [Import JSON](workflows/capabilities/google_search.json) | [Inputs and output](https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-readme) |
+| Google Search | [Research API integrations with an AI Agent and Google Search](workflows/capabilities/google_search.md) · [Import JSON](workflows/capabilities/google_search.json) | [Inputs and output](https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-readme) |
 | Google News | [Build a Google News topic digest with FlashData](workflows/capabilities/google_news.md) · [Import JSON](workflows/capabilities/google_news.json) | [Inputs and output](https://flashdata.dev/docs/sources/google_news?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_news-readme) |
 | Google Images | [Filter Google Images by dimensions and export source URLs with FlashData](workflows/capabilities/google_images.md) · [Import JSON](workflows/capabilities/google_images.json) | [Inputs and output](https://flashdata.dev/docs/sources/google_images?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_images-readme) |
 | Google Shopping | [Compare Google Shopping price snapshots with FlashData](workflows/capabilities/google_shopping.md) · [Import JSON](workflows/capabilities/google_shopping.json) | [Inputs and output](https://flashdata.dev/docs/sources/google_shopping?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_shopping-readme) |
@@ -71,7 +71,7 @@ npm run test:integration
 npm run dev
 ```
 
-The Docker integration suite executes all 15 task workflows, exports their files, and checks legacy workflows against API fixtures without using Credits. It does not prove live upstream availability or actual customer-storage delivery. [Release instructions](RELEASING.md) distinguish npm publication, verification submission, public node discovery, and template-library publication.
+The Docker integration suite executes all 15 task workflows, exports their files, and checks legacy workflows against API fixtures without using Credits. The Google Search Agent is tested with a local mock model and synthetic search evidence, not a live model or paid search. It does not prove live upstream availability or actual customer-storage delivery. [Release instructions](RELEASING.md) distinguish npm publication, verification submission, public node discovery, and template-library publication.
 
 [Older multi-service examples](workflows/README.md#older-multi-service-examples) remain available; their external writes/model access require your own setup. [Report an issue](https://github.com/rocosen/n8n-nodes-flashdata/issues) · [Changelog](CHANGELOG.md) · [n8n community nodes](https://docs.n8n.io/integrations/community-nodes/).
 
