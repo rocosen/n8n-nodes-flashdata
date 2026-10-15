@@ -1,6 +1,6 @@
 # Export timestamped YouTube transcripts to WebVTT with FlashData
 
-![Workflow layout](https://raw.githubusercontent.com/flashdata-dev/n8n-nodes-flashdata/main/workflows/capabilities/images/youtube_transcript.png)
+![Workflow layout](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/images/youtube_transcript.png)
 
 ## Who this is for
 

@@ -1,6 +1,6 @@
 # Compare Google Shopping price snapshots with FlashData
 
-![Workflow layout](https://raw.githubusercontent.com/flashdata-dev/n8n-nodes-flashdata/main/workflows/capabilities/images/google_shopping.png)
+![Workflow layout](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/images/google_shopping.png)
 
 ## Who this is for
 

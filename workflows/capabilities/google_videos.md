@@ -1,6 +1,6 @@
 # Group Google video search results by website with FlashData
 
-![Workflow layout](https://raw.githubusercontent.com/flashdata-dev/n8n-nodes-flashdata/main/workflows/capabilities/images/google_videos.png)
+![Workflow layout](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/images/google_videos.png)
 
 ## Who this is for
 

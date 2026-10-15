@@ -35,7 +35,7 @@ Update version and changelog, review CI, and push the matching version tag. Keep
 After npm publication and a clean install test, sign in to [n8n Creator Portal](https://creators.n8n.io/nodes). Suggested submission details:
 
 - Package: `n8n-nodes-flashdata`
-- Repository: `https://github.com/flashdata-dev/n8n-nodes-flashdata`
+- Repository: `https://github.com/rocosen/n8n-nodes-flashdata`
 - Website: `https://flashdata.dev`
 - Description: `Google Search, News, Images, Shopping, Videos and Places; YouTube search, metadata, transcripts, captions, license labels, channels, autocomplete and async cloud downloads.`
 - Authentication: one FlashData API key; the connection test is non-billable.
