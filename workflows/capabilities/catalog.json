@@ -1,8 +1,8 @@
 [
   {
     "source": "google_search",
-    "title": "Export Google Search SERP rankings to CSV with FlashData",
-    "filename": "google-serp.csv",
+    "title": "Find Google Search ranking gaps against competitors with FlashData",
+    "filename": "google-search-review-queue.csv",
     "kind": "csv"
   },
   {
