@@ -1,5 +1,5 @@
 {
-  "name": "Export Google Search SERP rankings to CSV with FlashData",
+  "name": "Find Google Search ranking gaps against competitors with FlashData",
   "active": false,
   "nodes": [
     {
@@ -24,8 +24,21 @@
       ],
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "{\n  \"query\": \"battery recycling research\",\n  \"country\": \"us\",\n  \"language\": \"en\",\n  \"result_count\": 10\n}",
+        "jsonOutput": "{\n  \"keywords\": [\n    \"battery recycling services\",\n    \"lithium battery recycling\"\n  ],\n  \"target_domain\": \"example.com\",\n  \"competitor_domains\": [\n    \"example.org\",\n    \"example.net\"\n  ],\n  \"country\": \"us\",\n  \"language\": \"en\",\n  \"result_count\": 10\n}",
         "options": {}
+      }
+    },
+    {
+      "id": "3d8baf87-e319-51f8-a79c-397d4ca3d2e5",
+      "name": "Validate keywords and domains",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        490,
+        320
+      ],
+      "parameters": {
+        "jsCode": "const config = $input.first().json;\nif (!Array.isArray(config.keywords) || !config.keywords.length || config.keywords.length > 20) {\n  throw new Error('Enter 1–20 keywords. Each unique keyword makes one paid search request.');\n}\nconst keywords = [...new Set(config.keywords.map(value => {\n  if (typeof value !== 'string' || !value.trim() || value.trim().length > 2000) {\n    throw new Error('Each keyword must contain 1–2000 characters.');\n  }\n  return value.trim();\n}))];\nfunction domain(value) {\n  if (typeof value !== 'string') throw new Error('Use bare domains, such as example.com.');\n  const host = value.trim().toLowerCase().replace(/^www\\./, '').replace(/\\.$/, '');\n  if (host.length > 253 || !/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(host)) {\n    throw new Error('Use bare ASCII/punycode domains without protocols, paths or ports.');\n  }\n  return host;\n}\nconst target = domain(config.target_domain);\nif (!Array.isArray(config.competitor_domains) || !config.competitor_domains.length || config.competitor_domains.length > 5) {\n  throw new Error('Enter 1–5 competitor domains.');\n}\nconst competitors = [...new Set(config.competitor_domains.map(domain))];\nconst domains = [target, ...competitors];\nfor (let i = 0; i < domains.length; i++) {\n  for (let j = i + 1; j < domains.length; j++) {\n    if (domains[i] === domains[j] || domains[i].endsWith('.' + domains[j]) || domains[j].endsWith('.' + domains[i])) {\n      throw new Error('Tracked domains must be distinct and must not overlap as parent/subdomains.');\n    }\n  }\n}\nconst country = String(config.country ?? '').trim().toLowerCase();\nconst language = String(config.language ?? '').trim().toLowerCase();\nif (!/^[a-z]{2}$/.test(country)) throw new Error('Set a two-letter country code.');\nif (!/^[a-z0-9-]{1,35}$/.test(language)) throw new Error('Set a valid language code.');\nif (!Number.isInteger(config.result_count) || config.result_count < 1 || config.result_count > 100) {\n  throw new Error('result_count must be an integer from 1 to 100.');\n}\nreturn keywords.map(query => ({ json: {\n  query, target_domain: target, competitor_domains: competitors,\n  country, language, result_count: config.result_count,\n  planned_paid_queries: keywords.length,\n} }));\n"
       }
     },
     {
@@ -34,7 +47,7 @@
       "type": "n8n-nodes-flashdata.flashdata",
       "typeVersion": 1,
       "position": [
-        500,
+        740,
         320
       ],
       "parameters": {
@@ -44,8 +57,23 @@
         "options": {
           "gl": "={{$json.country}}",
           "hl": "={{$json.language}}",
-          "num": "={{$json.result_count}}"
+          "num": "={{$json.result_count}}",
+          "page": 1,
+          "autocorrect": false
         }
+      }
+    },
+    {
+      "id": "13ce7fca-7cd2-5735-88f6-9a2c4b2645bb",
+      "name": "Build ranking audit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        990,
+        320
+      ],
+      "parameters": {
+        "jsCode": "const inputs = $('Validate keywords and domains').all().map(item => item.json);\nconst responses = $input.all();\nif (inputs.length !== responses.length) throw new Error('Search response count does not match the keyword list.');\nfunction hostOf(value) {\n  if (typeof value !== 'string') return null;\n  const match = /^https?:\\/\\/([^/?#]+)(?:[/?#]|$)/i.exec(value);\n  if (!match || match[1].includes('@')) return null;\n  const host = match[1].replace(/:\\d+$/, '').toLowerCase().replace(/^www\\./, '').replace(/\\.$/, '');\n  return /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(host) ? host : null;\n}\nconst audits = responses.map((item, index) => {\n  const settings = inputs[index];\n  const envelope = item.json;\n  const result = envelope.results?.[0];\n  if (envelope.error || envelope.status !== 'done' || !Array.isArray(result?.organic)) {\n    throw new Error('Expected a completed Google Search response with an organic array; inspect the Fetch node before retrying.');\n  }\n  const domains = [settings.target_domain, ...settings.competitor_domains];\n  let invalidUrls = 0;\n  const unique = new Map();\n  for (const row of result.organic) {\n    const host = hostOf(row.link);\n    if (!host) { invalidUrls++; continue; }\n    const url = row.link.split('#')[0];\n    const position = Number.isInteger(row.position) && row.position > 0 ? row.position : null;\n    const match = domains.find(d => host === d || host.endsWith('.' + d)) ?? '';\n    const entry = { position, domain: host, matched_domain: match, role: match === settings.target_domain ? 'target' : match ? 'competitor' : 'other', title: row.title ?? '', url, snippet: row.snippet ?? '' };\n    const previous = unique.get(url);\n    if (!previous || (position !== null && (previous.position === null || position < previous.position))) unique.set(url, entry);\n  }\n  const evidence = [...unique.values()].sort((a, b) => (a.position ?? Infinity) - (b.position ?? Infinity));\n  const positions = domains.map(domain => {\n    const matches = evidence.filter(row => row.matched_domain === domain);\n    const ranked = matches.filter(row => row.position !== null);\n    return { domain, role: domain === settings.target_domain ? 'target' : 'competitor', observed: matches.length > 0, position: ranked[0]?.position ?? null, url: ranked[0]?.url ?? matches[0]?.url ?? '', title: ranked[0]?.title ?? matches[0]?.title ?? '', matching_pages: matches.length, unknown_positions: matches.filter(row => row.position === null).length };\n  });\n  const target = positions[0];\n  const competitors = positions.slice(1);\n  const best = competitors.filter(row => row.position !== null).sort((a, b) => a.position - b.position)[0];\n  let finding, action;\n  if (result.organic.length === 0) {\n    finding = 'no_organic_results'; action = 'Check the keyword and search settings; no ranking conclusion is available.';\n  } else if (invalidUrls || positions.some(row => row.unknown_positions > 0)) {\n    finding = 'incomplete_result_fields'; action = 'Inspect source results with invalid URLs or missing positions before comparing.';\n  } else if (!target.observed && best) {\n    finding = 'competitor_visible_target_not_found'; action = 'Review the competing page and your relevant landing page; the target was not found in this returned result set.';\n  } else if (target.position !== null && best && best.position < target.position) {\n    finding = 'competitor_ahead'; action = 'Compare the linked pages and search intent before deciding whether to improve your page.';\n  } else if (target.position !== null) {\n    finding = 'target_leads_tracked_competitors'; action = 'Keep this snapshot as a reference; no tracked competitor has a better known position.';\n  } else {\n    finding = 'no_tracked_domains_found'; action = 'Review the other ranking domains and confirm that the chosen competitors are relevant.';\n  }\n  return {\n    query: settings.query, country: settings.country, language: settings.language, requested_count: settings.result_count,\n    returned_count: result.organic.length, unique_valid_urls: evidence.length, invalid_url_count: invalidUrls,\n    captured_at: envelope.created_at ?? null, credits: typeof envelope.usage?.credits === 'number' ? envelope.usage.credits : null,\n    target_domain: target.domain, target_position: target.position, target_url: target.url,\n    best_competitor_domain: best?.domain ?? '', best_competitor_position: best?.position ?? null, best_competitor_url: best?.url ?? '',\n    position_gap: target.position !== null && best ? target.position - best.position : null,\n    finding, suggested_review: action, search_parameters_returned: result.searchParameters ?? null, domains: positions, evidence,\n  };\n});\nconst order = ['competitor_visible_target_not_found', 'competitor_ahead', 'incomplete_result_fields', 'no_tracked_domains_found', 'no_organic_results', 'target_leads_tracked_competitors'];\naudits.sort((a, b) => order.indexOf(a.finding) - order.indexOf(b.finding));\nreturn [{ json: {\n  source: 'google_search', scope: 'One requested page per unique keyword; observed organic positions only.',\n  requests: audits.length, total_credits: audits.every(row => row.credits !== null) ? audits.reduce((sum, row) => sum + row.credits, 0) : null,\n  review_candidates: audits.filter(row => ['competitor_visible_target_not_found', 'competitor_ahead'].includes(row.finding)).length,\n  limitations: 'A missing domain is not proof of deindexing or a content gap. No search volume, full-page analysis, historical changes or ranking guarantees. created_at is collection time, not publication time.',\n  keywords: audits,\n} }];\n"
       }
     },
     {
@@ -54,11 +82,11 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        760,
-        320
+        1250,
+        220
       ],
       "parameters": {
-        "jsCode": "const envelope=$input.first().json; const result=envelope.results?.[0] ?? {}; const settings=$('Configure task').first().json;\nreturn (result.organic ?? []).map((r,i)=>({json:{query:settings.query,position:r.position ?? i+1,title:r.title ?? '',url:r.link ?? '',snippet:r.snippet ?? '',captured_at: envelope.created_at ?? '', credits: envelope.usage?.credits ?? null}}));"
+        "jsCode": "// Prefix spreadsheet formulas in untrusted text before CSV export. JSON keeps the original values.\nconst safeText = value => typeof value === 'string' && /^[\\s]*[=+@-]/.test(value) ? \"'\" + value : value;\nreturn $input.first().json.keywords.map(row => ({ json: Object.fromEntries(Object.entries({\n  query: row.query, finding: row.finding, target_domain: row.target_domain,\n  target_position: row.target_position, best_competitor_domain: row.best_competitor_domain,\n  best_competitor_position: row.best_competitor_position, position_gap: row.position_gap,\n  target_url: row.target_url, best_competitor_url: row.best_competitor_url,\n  country: row.country, language: row.language, requested_count: row.requested_count,\n  returned_count: row.returned_count, captured_at: row.captured_at, credits: row.credits,\n  suggested_review: row.suggested_review,\n}).map(([key, value]) => [key, safeText(value)])) }));\n"
       }
     },
     {
@@ -67,13 +95,29 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        1020,
-        320
+        1500,
+        220
       ],
       "parameters": {
         "operation": "csv",
         "options": {
-          "fileName": "google-serp.csv"
+          "fileName": "google-search-review-queue.csv"
+        }
+      }
+    },
+    {
+      "id": "215d670b-a0aa-5b98-8ede-b876bb15e5eb",
+      "name": "Export evidence report",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1250,
+        500
+      ],
+      "parameters": {
+        "operation": "toJson",
+        "options": {
+          "fileName": "google-search-evidence.json"
         }
       }
     },
@@ -84,12 +128,12 @@
       "typeVersion": 1,
       "position": [
         0,
-        -400
+        -600
       ],
       "parameters": {
-        "content": "# Export Google Search SERP rankings to CSV with FlashData\n\n## Who this is for\n\nDevelopers and researchers who want to export ranked Google web search results with source URLs, snippets, and collection time for an auditable research dataset.\n\n## What it does\n\nExport ranked Google web search results with source URLs, snippets, and collection time for an auditable research dataset. The workflow keeps the source context and produces a downloadable CSV artifact inside n8n. It does not send data to an external spreadsheet or messaging account.\n\n## Setup\n\n1. Self-hosted n8n only while this community node awaits verification. Install `n8n-nodes-flashdata` version 0.2.0 or later.\n2. Create a FlashData account, enable this source, and select your FlashData API credential on the data nodes.\n3. Edit **Configure task**, then execute manually and inspect **Prepare output** before downloading **Export file**.\n\n## Requirements and customization\n\nFlashData queries consume Credits; the template itself is free. One page per run; ranking varies by query and location. This does not fetch article full text. Adjust the task inputs and transformation for your own dataset. Empty search results can produce no CSV rows; that does not indicate an export error. Treat retrieved titles, descriptions and links as external data.\n\n[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-template) \u00b7 [Current pricing](https://flashdata.dev/pricing)",
+        "content": "# Find Google Search ranking gaps against competitors with FlashData\n\n## Who this is for\nSEO practitioners and founders deciding which keyword/page pairs to investigate next.\n\n## What it does\nSearch your keyword list, match your website and up to five competitors, and highlight searches where a competitor appears while your site is missing or behind. Download a review queue as CSV and an evidence report as JSON, including competing URLs, each tracked domain's position, source snippets, search settings, collection time and usage. First-page organic results only; no historical database is required.\n\n## Setup\n1. Use self-hosted n8n and install `n8n-nodes-flashdata` 0.2.1 or later. The node is awaiting verification.\n2. [Create a FlashData account](https://flashdata.dev/), enable Google Search and create an API Key. Select your FlashData API credential on **Fetch google search**.\n3. Edit **Configure task**: 1–20 keywords, your bare domain, 1–5 competitor domains, country, language and requested result count. Replace the example domains before running.\n4. Run manually. Inspect **Build ranking audit**, then download **Export file** and **Export evidence report**. Open the linked pages before making SEO changes.\n\n## Cost and limits\nThe template is free; FlashData API queries consume paid Credits. Each unique keyword makes one paid request; the example makes two. No automatic pagination or retries. Returned counts can differ from requested counts. Missing domains mean only “not found in this result set”. This does not measure search volume, inspect page content, prove deindexing or explain ranking causes.\n\n[Google Search setup and API contract](https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-template) · [Current pricing](https://flashdata.dev/pricing)",
         "width": 1100,
-        "height": 630,
+        "height": 850,
         "color": 5
       }
     },
@@ -99,13 +143,29 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        0,
-        620
+        1100,
+        -420
       ],
       "parameters": {
-        "content": "## Execution\nConfigure inputs \u2192 select FlashData credentials \u2192 run manually \u2192 inspect output \u2192 download the file.\n\nQueries cost Credits. Retry a job read safely; do not automatically retry paid submissions.",
-        "width": 1100,
-        "height": 190,
+        "content": "## Read the outputs\n**CSV:** one row per keyword, grouped by finding. Positive position_gap means your site is behind the best tracked competitor. Blank position means unavailable, never rank zero.\n\n**JSON:** all tracked domains and deduplicated source results, including other websites. Use the URLs and snippets as evidence, then inspect the actual pages.\n\nThis is a review queue, not an SEO score or a prediction of traffic gains.",
+        "width": 680,
+        "height": 430,
+        "color": 7
+      }
+    },
+    {
+      "id": "4e70ea16-86c7-5e87-be89-e5fd3f496fcc",
+      "name": "Before paid queries",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        250,
+        650
+      ],
+      "parameters": {
+        "content": "## Check scope before executing\nValidation trims/deduplicates keywords and rejects invalid or overlapping tracked domains before any paid request. Domain matching includes subdomains. Use ASCII/punycode domain names.\n\n401/402/403/429 or timeouts stop the run. Check credentials, Credits and job history before retrying; earlier keywords may already have been billed.",
+        "width": 750,
+        "height": 290,
         "color": 7
       }
     }
@@ -126,6 +186,17 @@
       "main": [
         [
           {
+            "node": "Validate keywords and domains",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate keywords and domains": {
+      "main": [
+        [
+          {
             "node": "Fetch google search",
             "type": "main",
             "index": 0
@@ -137,7 +208,23 @@
       "main": [
         [
           {
+            "node": "Build ranking audit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build ranking audit": {
+      "main": [
+        [
+          {
             "node": "Prepare output",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Export evidence report",
             "type": "main",
             "index": 0
           }

@@ -194,7 +194,7 @@ try {
 		.map(JSON.parse);
 	assert.equal(
 		requests.length,
-		33,
+		34,
 		'Expected requests including 15 task templates, two polls, result redirect and anonymous read; no POST retries',
 	);
 	assert.deepEqual(
@@ -271,6 +271,31 @@ try {
 			'Storage secrets stay out of executions',
 		);
 		const source = capabilityFiles[index].replace('.json', '');
+		if (source === 'google_search') {
+			assert.equal(rows.length, 2);
+			assert.equal(rows[0].json.query, 'lithium battery recycling');
+			assert.equal(rows[0].json.finding, 'competitor_visible_target_not_found');
+			assert.equal(rows[0].json.target_position, null);
+			assert.equal(rows[1].json.position_gap, 4);
+			assert.equal(rows[1].json.target_url, 'https://www.example.com/recycling');
+			const report = data['Build ranking audit'][0].data.main[0][0].json;
+			assert.equal(report.requests, 2);
+			assert.equal(report.total_credits, 0.02);
+			assert.equal(report.review_candidates, 2);
+			assert.equal(report.keywords[1].evidence.length, 2);
+			assert.ok(data['Export evidence report'][0].data.main[0][0].binary.data);
+			const calls = requests.filter((r) =>
+				['battery recycling services', 'lithium battery recycling'].includes(r.query),
+			);
+			assert.equal(calls.length, 2);
+			assert.deepEqual(calls[0].params, {
+				gl: 'us',
+				hl: 'en',
+				num: 10,
+				page: 1,
+				autocorrect: false,
+			});
+		}
 		if (source === 'google_shopping') assert.equal(rows[0].json.change, 'new');
 		if (source === 'youtube_transcript')
 			assert.match(rows[0].json.content, /WEBVTT\n\n1\n00:00:00.000 --> 00:00:03.000/);

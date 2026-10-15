@@ -30,7 +30,6 @@ test('missing video metadata or captions cannot become invented IDs, permissions
 });
 test('empty searches stay empty and shopping compares display prices without inventing numeric savings', () => {
 	for (const source of [
-		'google_search',
 		'google_images',
 		'google_shopping',
 		'google_videos',
