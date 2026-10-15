@@ -17,14 +17,14 @@ Do not publish the initial package locally: n8n requires GitHub Actions and prov
 
 In npm package settings → Trusted Publishers, configure GitHub Actions:
 
-- Owner: `flashdata-dev`
+- Owner: `rocosen`
 - Repository: `n8n-nodes-flashdata`
 - Workflow: `publish.yml`
 - Environment: leave blank (the workflow does not use a GitHub Environment)
 
 Remove the `NPM_TOKEN` secret and revoke its token after the publisher is configured. The workflow's `id-token: write` permission allows npm OIDC publishing and provenance. Node 24 supplies a compatible npm CLI; trusted publishing requires npm 11.5.1 or newer.
 
-The package's GitHub Actions Trusted Publisher was saved on October 12, 2026 with the scope above. It allows direct npm publish and does not grant independent dist-tag management. The workflow now uses OIDC only, with no token fallback. The initial token expired on October 10; its Actions secret was removed. npm validates a new publisher on its first successful publication.
+The package's GitHub Actions Trusted Publisher was migrated on October 15, 2026 to the scope above; the old `flashdata-dev` connection was removed. It allows direct npm publish and does not grant independent dist-tag management. The workflow uses OIDC only, with no token fallback. The initial token expired on October 10; its Actions secret was removed. npm validates the new publisher on its first successful publication, due before October 17, 2026 at 06:39 UTC.
 
 In GitHub Actions, `n8n-node release` runs lint/build and npm publish with provenance. It does not create the version tag or a GitHub Release; maintainers create the tag before the workflow and the release after registry verification.
 
@@ -57,9 +57,9 @@ Checked October 8, 2026:
 - [npm trusted publishing](https://docs.npmjs.com/trusted-publishers)
 
 
-## Updating the pending 0.1.2 application
+## Updating the existing node application
 
-The Creator Portal was checked on October 12, 2026: Automated Review Complete; Manual Review Under Review. That screen offers no version/video edit action. Publish a validated new package with provenance, then recheck the same application. Do not create a duplicate submission or label the old video as a 0.2.0 demonstration. If the portal still has no update path, ask n8n through its documented support route after obtaining authorization to send that message.
+The Creator Portal was checked on October 15, 2026: Automated Review Complete; Manual Review Changes Required. The reviewer inspected 0.2.0 provenance but could not reach the old source repository. Publish a validated patch with provenance pointing to the public `rocosen` repository, verify registry installation, then confirm the changes and use **Resubmit Package** on the same application. Do not create a duplicate submission or label the old video as a newer-version demonstration.
 
 ## Template submission requirements checked October 12, 2026
 

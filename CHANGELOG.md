@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 (2026-10-15)
+
+- Publish from the public `rocosen/n8n-nodes-flashdata` repository with GitHub Actions provenance.
+- Update package source, issue, credential documentation and workflow image links after the repository migration. Node IDs, credentials, operations and API behavior are unchanged.
+
 ## 0.2.0 (2026-10-12)
 
 - Cover all 15 Google/YouTube sources, with source-specific operations and 30 search aliases.
