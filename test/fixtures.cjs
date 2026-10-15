@@ -1,30 +1,7 @@
 // Representative API fixtures based on the product source-reference contract, not live responses.
 function resultFor(body) {
-	if (
-		body.source === 'google_search' &&
-		['battery recycling services', 'lithium battery recycling'].includes(body.query)
-	) {
-		return {
-			organic: [
-				{
-					title: 'Competitor guide',
-					link: 'https://example.org/recycling',
-					snippet: 'Synthetic competitor result',
-					position: body.query === 'battery recycling services' ? 2 : 3,
-				},
-				...(body.query === 'battery recycling services'
-					? [
-							{
-								title: 'Target guide',
-								link: 'https://www.example.com/recycling',
-								snippet: 'Synthetic target result',
-								position: 6,
-							},
-						]
-					: []),
-			],
-		};
-	}
+	if (body.source === 'google_search' && body.query === 'fixture-empty-search')
+		return { organic: [] };
 	const video = {
 		videoId: 'dQw4w9WgXcQ',
 		title: body.query || 'Example video',

@@ -1,9 +1,9 @@
 [
   {
     "source": "google_search",
-    "title": "Find Google Search ranking gaps against competitors with FlashData",
-    "filename": "google-search-review-queue.csv",
-    "kind": "csv"
+    "title": "Research API integrations with an AI Agent and Google Search",
+    "filename": "integration-research-brief.md",
+    "kind": "text"
   },
   {
     "source": "google_news",

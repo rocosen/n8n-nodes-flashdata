@@ -97,8 +97,8 @@ const templateWorkflows = templateCases.map(([file, id, stopAt]) => {
 	const original = JSON.parse(readFileSync(join('workflows', file), 'utf8'));
 	const nodes = original.nodes.slice(0, original.nodes.findIndex((n) => n.name === stopAt) + 1);
 	for (const n of nodes)
-		if (n.type === 'n8n-nodes-flashdata.flashdata') {
-			n.type = 'CUSTOM.flashdata';
+		if (n.type.startsWith('n8n-nodes-flashdata.flashdata')) {
+			n.type = n.type.replace('n8n-nodes-flashdata.', 'CUSTOM.');
 			n.credentials = { flashdataApi: { id: 'flashdata-test-key', name: 'FlashData test' } };
 		}
 	return workflow(id, nodes.slice(1));
@@ -113,17 +113,46 @@ const capabilityWorkflows = capabilityFiles.map((file, index) => {
 		if (n.type === 'n8n-nodes-base.scheduleTrigger') delete original.connections[n.name];
 	original.nodes = original.nodes.filter((n) => n.type !== 'n8n-nodes-base.scheduleTrigger');
 	for (const n of original.nodes)
-		if (n.type === 'n8n-nodes-flashdata.flashdata') {
-			n.type = 'CUSTOM.flashdata';
+		if (n.type.startsWith('n8n-nodes-flashdata.flashdata')) {
+			n.type = n.type.replace('n8n-nodes-flashdata.', 'CUSTOM.');
 			n.credentials = { flashdataApi: { id: 'flashdata-test-key', name: 'FlashData test' } };
+		}
+	for (const n of original.nodes)
+		if (n.type === '@n8n/n8n-nodes-langchain.lmChatOpenAi') {
+			n.credentials = { openAiApi: { id: 'model-test-key', name: 'Local model fixture' } };
 		}
 	return original;
 });
-const workflows = [success, payment, invalid, ...templateWorkflows, ...capabilityWorkflows];
+const agentTemplate = capabilityWorkflows.find((w) =>
+	w.nodes.some((n) => n.name === 'Research agent'),
+);
+const agentCases = ['EMPTY', 'SKIP', 'LIMIT', 'PAYMENT'].map((scenario) => {
+	const w = structuredClone(agentTemplate);
+	w.id = 'agent' + scenario;
+	const configNode = w.nodes.find((n) => n.name === 'Configure task');
+	const settings = JSON.parse(configNode.parameters.jsonOutput);
+	settings.question = 'FIXTURE_' + scenario;
+	configNode.parameters.jsonOutput = JSON.stringify(settings);
+	return w;
+});
+const workflows = [
+	success,
+	payment,
+	invalid,
+	...templateWorkflows,
+	...capabilityWorkflows,
+	...agentCases,
+];
 writeFileSync(join(fixtures, 'workflows.json'), JSON.stringify(workflows));
 writeFileSync(
 	join(fixtures, 'credentials.json'),
 	JSON.stringify([
+		{
+			id: 'model-test-key',
+			name: 'Local model fixture',
+			type: 'openAiApi',
+			data: { apiKey: 'model-test-not-a-secret', url: 'http://127.0.0.1:17893/v1' },
+		},
 		{
 			id: 'flashdata-test-key',
 			name: 'FlashData test',
@@ -144,7 +173,11 @@ writeFileSync(
 const commands = [
 	'n8n import:credentials --input=/fixtures/credentials.json > /fixtures/import-credentials.log 2>&1',
 	'n8n import:workflow --input=/fixtures/workflows.json > /fixtures/import-workflows.log 2>&1',
-	...workflows.map((w) => `n8n execute --id=${w.id} --rawOutput > /fixtures/${w.id}.log 2>&1`),
+	...workflows.map((w) => {
+		const command = `n8n execute --id=${w.id} --rawOutput > /fixtures/${w.id}.log 2>&1`;
+		// n8n CLI exit codes differ for handled workflow errors; assert the recorded failure below.
+		return w.id === 'agentLIMIT' ? `(${command} || true)` : command;
+	}),
 ];
 try {
 	const result = spawnSync(
@@ -152,6 +185,8 @@ try {
 		[
 			'run',
 			'--rm',
+			'--network',
+			'none',
 			'--user',
 			'0:0',
 			'--entrypoint',
@@ -176,14 +211,16 @@ try {
 			`${fixtures}:/fixtures`,
 			image,
 			'-c',
-			commands.join(' && '),
+			'node /workspace/test/mock-model.cjs > /fixtures/model-server.log 2>&1 & ' +
+				commands.join(' && '),
 		],
 		{ encoding: 'utf8', timeout: 420000 },
 	);
 	if (result.status !== 0) {
 		for (const file of ['import-credentials', 'import-workflows', ...workflows.map((w) => w.id)]) {
 			try {
-				console.error(readFileSync(join(fixtures, `${file}.log`), 'utf8').slice(-5000));
+				const log = readFileSync(join(fixtures, `${file}.log`), 'utf8');
+				if (!log.includes('"status": "success"')) console.error(file + ': ' + log.slice(-1200));
 			} catch {}
 		}
 		throw new Error(`n8n integration failed: ${result.stderr || result.error || result.status}`);
@@ -194,8 +231,8 @@ try {
 		.map(JSON.parse);
 	assert.equal(
 		requests.length,
-		34,
-		'Expected requests including 15 task templates, two polls, result redirect and anonymous read; no POST retries',
+		40,
+		'Expected requests including 15 task templates, Agent boundary cases, two polls, result redirect and anonymous read; no POST retries',
 	);
 	assert.deepEqual(
 		requests
@@ -272,29 +309,38 @@ try {
 		);
 		const source = capabilityFiles[index].replace('.json', '');
 		if (source === 'google_search') {
-			assert.equal(rows.length, 2);
-			assert.equal(rows[0].json.query, 'lithium battery recycling');
-			assert.equal(rows[0].json.finding, 'competitor_visible_target_not_found');
-			assert.equal(rows[0].json.target_position, null);
-			assert.equal(rows[1].json.position_gap, 4);
-			assert.equal(rows[1].json.target_url, 'https://www.example.com/recycling');
-			const report = data['Build ranking audit'][0].data.main[0][0].json;
-			assert.equal(report.requests, 2);
-			assert.equal(report.total_credits, 0.02);
-			assert.equal(report.review_candidates, 2);
-			assert.equal(report.keywords[1].evidence.length, 2);
-			assert.ok(data['Export evidence report'][0].data.main[0][0].binary.data);
-			const calls = requests.filter((r) =>
-				['battery recycling services', 'lithium battery recycling'].includes(r.query),
+			assert.equal(rows.length, 1);
+			const report = rows[0].json;
+			assert.equal(report.tool_calls, 2);
+			assert.equal(report.flashdata_credits, 0.02);
+			assert.equal(report.evidence_status, 'searches_recorded');
+			assert.equal(
+				report.searches[1].query,
+				'GitHub webhook signature delivery limits official docs',
 			);
+			assert.equal(
+				report.searches[1].responses[0].results[0].organic[0].link,
+				'https://example.com/research',
+			);
+			assert.match(report.content, /Open questions/);
+			assert.ok(data['Export evidence report'][0].data.main[0][0].binary.data);
+			const calls = requests.filter((r) => r.query?.includes('official docs'));
 			assert.equal(calls.length, 2);
 			assert.deepEqual(calls[0].params, {
 				gl: 'us',
 				hl: 'en',
-				num: 10,
+				num: 5,
 				page: 1,
 				autocorrect: false,
 			});
+			const modelCalls = readFileSync(join(fixtures, 'models.jsonl'), 'utf8')
+				.trim()
+				.split('\n')
+				.map(JSON.parse);
+			assert.deepEqual(
+				modelCalls.filter((m) => m.scenario === 'NORMAL').map((m) => m.observations),
+				[0, 1, 2],
+			);
 		}
 		if (source === 'google_shopping') assert.equal(rows[0].json.change, 'new');
 		if (source === 'youtube_transcript')
@@ -304,6 +350,38 @@ try {
 		if (source === 'youtube_trainability') assert.equal(rows[0].json.creative_commons_label, true);
 		if (source === 'youtube_download') assert.equal(rows[0].json.file_size, 2048);
 	}
+	for (const scenario of ['EMPTY', 'SKIP']) {
+		const raw = readFileSync(join(fixtures, 'agent' + scenario + '.log'), 'utf8');
+		const run = JSON.parse(raw.slice(raw.indexOf('{')));
+		assert.equal(run.status, 'success');
+		const report = run.data.resultData.runData['Prepare output'][0].data.main[0][0].json;
+		if (scenario === 'EMPTY') {
+			assert.equal(report.searches[0].status, 'no_results');
+			assert.equal(report.searches[0].returned_count, 0);
+		} else {
+			assert.equal(report.evidence_status, 'no_searches_recorded');
+			assert.match(report.content, /no recorded web evidence/);
+		}
+	}
+	const limitLog = readFileSync(join(fixtures, 'agentLIMIT.log'), 'utf8');
+	assert.match(limitLog, /Max iterations \(4\) reached/);
+	assert.equal(requests.filter((r) => r.query?.startsWith('fixture-loop-')).length, 4);
+	const paymentLog = readFileSync(join(fixtures, 'agentPAYMENT.log'), 'utf8');
+	const paymentRun = JSON.parse(
+		paymentLog.slice(paymentLog.indexOf('{'), paymentLog.lastIndexOf('}') + 1),
+	);
+	assert.equal(paymentRun.status, 'success');
+	const paymentReport =
+		paymentRun.data.resultData.runData['Prepare output'][0].data.main[0][0].json;
+	assert.equal(paymentReport.searches[0].status, 'tool_error_or_incomplete_response');
+	assert.equal(paymentReport.searches[0].returned_count, null);
+	assert.equal(paymentReport.flashdata_credits, null);
+	assert.match(paymentReport.content, /tool_error_or_incomplete_response/);
+	assert.equal(
+		requests.filter((r) => r.query === 'simulate-payment-error').length,
+		2,
+		'One standalone payment test and one Agent test; no paid-call retries',
+	);
 	assert.equal(new Set(requests.filter((r) => r.source).map((r) => r.source)).size, 15);
 	assert.equal(
 		requests.filter((r) => r.source === 'youtube_download').length,
@@ -318,8 +396,9 @@ try {
 	assert.equal(requests.filter((r) => r.kind === 'anonymous-result').length, 1);
 
 	console.log(
-		`PASS: n8n ${image}, all 15 sources and exported task artifacts, per-item expressions, X-API-Key, nested params, URL normalization, paired items, payment errors, no automatic retry, validation before HTTP`,
+		`PASS: n8n ${image}, 25 workflows including Agent follow-up, empty searches, no-search answers, iteration cap and payment failure; all 15 sources and exported task artifacts, per-item expressions, X-API-Key, nested params, URL normalization, paired items, payment errors, no automatic retry, validation before HTTP`,
 	);
 } finally {
-	rmSync(fixtures, { recursive: true, force: true });
+	if (process.env.KEEP_N8N_FIXTURES) console.log('Fixtures:', fixtures);
+	else rmSync(fixtures, { recursive: true, force: true });
 }

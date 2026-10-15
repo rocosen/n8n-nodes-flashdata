@@ -1,8 +1,8 @@
 # FlashData task workflows
 
-All 15 source capabilities have independent, inactive workflows. Install package 0.2.0 or later on self-hosted n8n, import a JSON, select the FlashData credential, and edit Configure task. Each workflow produces a downloadable artifact without requiring a second service account.
+All 15 source capabilities have independent, inactive workflows. Install package 0.2.0 or later on self-hosted n8n, import a JSON, select the FlashData credential, and edit Configure task. Each workflow produces a downloadable artifact. The Google Search research Agent also needs a tool-calling model credential; the other task workflows need only FlashData (and your storage configuration for downloads).
 
-- [Find Google Search ranking gaps against competitors with FlashData](capabilities/google_search.md) · [JSON](capabilities/google_search.json)
+- [Research API integrations with an AI Agent and Google Search](capabilities/google_search.md) · [JSON](capabilities/google_search.json)
 - [Build a Google News topic digest with FlashData](capabilities/google_news.md) · [JSON](capabilities/google_news.json)
 - [Filter Google Images by dimensions and export source URLs with FlashData](capabilities/google_images.md) · [JSON](capabilities/google_images.json)
 - [Compare Google Shopping price snapshots with FlashData](capabilities/google_shopping.md) · [JSON](capabilities/google_shopping.json)
