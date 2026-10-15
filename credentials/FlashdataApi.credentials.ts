@@ -13,7 +13,7 @@ export class FlashdataApi implements ICredentialType {
 		light: 'file:../nodes/Flashdata/flashdata.svg',
 		dark: 'file:../nodes/Flashdata/flashdata.svg',
 	};
-	documentationUrl = 'https://github.com/flashdata-dev/n8n-nodes-flashdata#credentials-and-costs';
+	documentationUrl = 'https://github.com/rocosen/n8n-nodes-flashdata#credentials-and-costs';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',

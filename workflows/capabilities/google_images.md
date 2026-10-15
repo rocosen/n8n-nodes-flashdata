@@ -1,6 +1,6 @@
 # Filter Google Images by dimensions and export source URLs with FlashData
 
-![Workflow layout](https://raw.githubusercontent.com/flashdata-dev/n8n-nodes-flashdata/main/workflows/capabilities/images/google_images.png)
+![Workflow layout](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/images/google_images.png)
 
 ## Who this is for
 

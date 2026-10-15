@@ -73,6 +73,6 @@ npm run dev
 
 The Docker integration suite executes all 15 task workflows, exports their files, and checks legacy workflows against API fixtures without using Credits. It does not prove live upstream availability or actual customer-storage delivery. [Release instructions](RELEASING.md) distinguish npm publication, verification submission, public node discovery, and template-library publication.
 
-[Older multi-service examples](workflows/README.md#older-multi-service-examples) remain available; their external writes/model access require your own setup. [Report an issue](https://github.com/flashdata-dev/n8n-nodes-flashdata/issues) · [Changelog](CHANGELOG.md) · [n8n community nodes](https://docs.n8n.io/integrations/community-nodes/).
+[Older multi-service examples](workflows/README.md#older-multi-service-examples) remain available; their external writes/model access require your own setup. [Report an issue](https://github.com/rocosen/n8n-nodes-flashdata/issues) · [Changelog](CHANGELOG.md) · [n8n community nodes](https://docs.n8n.io/integrations/community-nodes/).
 
 [n8n](https://n8n.io/) is a fair-code licensed workflow automation platform. This package is MIT licensed.

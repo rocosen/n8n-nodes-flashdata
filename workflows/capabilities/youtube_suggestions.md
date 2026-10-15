@@ -1,6 +1,6 @@
 # Build a YouTube autocomplete keyword sheet with FlashData
 
-![Workflow layout](https://raw.githubusercontent.com/flashdata-dev/n8n-nodes-flashdata/main/workflows/capabilities/images/youtube_suggestions.png)
+![Workflow layout](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/images/youtube_suggestions.png)
 
 ## Who this is for
 

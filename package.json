@@ -29,12 +29,12 @@
   ],
   "author": {
     "name": "flashdata-dev",
-    "url": "https://github.com/flashdata-dev",
+    "url": "https://flashdata.dev",
     "email": "rocosenyy@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flashdata-dev/n8n-nodes-flashdata.git"
+    "url": "git+https://github.com/rocosen/n8n-nodes-flashdata.git"
   },
   "scripts": {
     "build": "n8n-node build",
@@ -74,6 +74,6 @@
     "n8n-workflow": "*"
   },
   "bugs": {
-    "url": "https://github.com/flashdata-dev/n8n-nodes-flashdata/issues"
+    "url": "https://github.com/rocosen/n8n-nodes-flashdata/issues"
   }
 }

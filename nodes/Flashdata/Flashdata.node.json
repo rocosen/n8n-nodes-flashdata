@@ -6,12 +6,12 @@
 	"resources": {
 		"credentialDocumentation": [
 			{
-				"url": "https://github.com/flashdata-dev/n8n-nodes-flashdata#credentials-and-costs"
+				"url": "https://github.com/rocosen/n8n-nodes-flashdata#credentials-and-costs"
 			}
 		],
 		"primaryDocumentation": [
 			{
-				"url": "https://github.com/flashdata-dev/n8n-nodes-flashdata"
+				"url": "https://github.com/rocosen/n8n-nodes-flashdata"
 			},
 			{
 				"url": "https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-node-docs"

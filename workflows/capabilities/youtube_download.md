@@ -1,6 +1,6 @@
 # Deliver a YouTube clip to S3 or cloud storage with FlashData
 
-![Workflow layout](https://raw.githubusercontent.com/flashdata-dev/n8n-nodes-flashdata/main/workflows/capabilities/images/youtube_download.png)
+![Workflow layout](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/images/youtube_download.png)
 
 ## Who this is for
 
