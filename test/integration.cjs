@@ -320,8 +320,16 @@ try {
 			);
 			assert.equal(
 				report.searches[1].responses[0].results[0].organic[0].link,
-				'https://example.com/research',
+				'https://example.com/webhook-delivery',
 			);
+			assert.equal(report.report_schema_version, '2');
+			assert.deepEqual(report.findings[0].source_ids, ['S1R1']);
+			assert.deepEqual(report.findings[1].source_ids, ['S2R1']);
+			assert.deepEqual(report.findings[2].source_ids, []);
+			assert.equal(report.findings[2].assessment, 'not_established');
+			assert.match(report.content, /\n## Evidence and implementation checklist\n/);
+			assert.match(report.content, /\n### S2R1:/);
+			assert.match(report.content, /Synthetic search fixture/);
 			assert.match(report.content, /Open questions/);
 			assert.ok(data['Export evidence report'][0].data.main[0][0].binary.data);
 			const calls = requests.filter((r) => r.query?.includes('official docs'));

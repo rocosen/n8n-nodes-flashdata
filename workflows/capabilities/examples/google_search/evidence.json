@@ -1,0 +1,136 @@
+[
+  {
+    "content": "# API integration preparation brief\n\n## Task\n\nSYNTHETIC EXAMPLE — How should an example service deliver signed webhook events into self\\-hosted n8n?\n\n**Context:** Illustrative fixture only: URLs, snippets, timestamps and Credits are synthetic\\. No live API or model was called; this is not advice about GitHub or another real provider\\.\n\n## Summary\n\nSynthetic demonstration: signature handling and delivery identification need implementation checks; exact settings and retry guarantees remain unresolved\\.\n\n## Evidence and implementation checklist\n\nEvidence assessments below are the Agent's judgments, not independently verified facts. Source IDs are checked against recorded search results; that check does not establish that a snippet supports a claim.\n\n| Check | Finding | Agent assessment | Sources | Recommended next action | How to verify |\n| --- | --- | --- | --- | --- | --- |\n| Signature verification | The synthetic excerpt calls for verifying a signature against the original request body\\. It does not establish the header, algorithm or secret configuration\\. | partial | [S1R1](<https://example.com/webhook-verification>) | Read the actual provider documentation, confirm the signing scheme and preserve the original body before parsing\\. | After confirming the scheme, test a valid signature and a tampered payload; confirm the invalid payload is rejected before processing\\. |\n| Delivery identification | The synthetic excerpt states that deliveries include an identifier\\. It does not establish identifier reuse during retries\\. | partial | [S2R1](<https://example.com/webhook-delivery>) | Confirm identifier semantics before choosing a deduplication key and storage retention period\\. | Replay a permitted test delivery and inspect identifiers and side effects; define the expected behavior from the actual service contract\\. |\n| Retry and timeout policy | Retry intervals, timeout limits and retention guarantees are not established by the available snippets\\. | not_established | None recorded | Inspect the provider delivery and retry documentation before selecting a queue or retention policy\\. | Record the documented limits and perform authorized failure/retry tests in a test environment; do not infer a numeric limit from search ranking\\. |\n\n## Source excerpts\n\nThese are the original returned snippets, not full pages. Collection time is not publication time. Open the linked documentation before relying on it.\n\n### S1R1: Example webhook verification guide — synthetic fixture\n\n[S1R1](<https://example.com/webhook-verification>)\n\n> Synthetic search fixture: validate the webhook signature against the original request body before processing an event\\. The excerpt does not name the header or algorithm\\.\n\nSearch 1, result 1; collected: 2026\\-10\\-21T00:00:00Z.\n\n### S2R1: Example delivery guide — synthetic fixture\n\n[S2R1](<https://example.com/webhook-delivery>)\n\n> Synthetic search fixture: webhook deliveries include a delivery identifier\\. This excerpt does not establish retry timing or retention guarantees\\.\n\nSearch 2, result 1; collected: 2026\\-10\\-21T00:00:00Z.\n\n## Open questions\n\n- [ ] Which exact signing header and algorithm apply? Check the actual provider documentation\\.\n- [ ] Are delivery identifiers reused on retries, and what retry window must the integration support? Verify the service contract before implementation\\.\n\n## Search execution record\n\n- Search 1: \"example service webhook signature documentation\" — results_returned; results: 1; Credits: 0.01\n- Search 2: \"example service webhook delivery retry documentation\" — results_returned; results: 1; Credits: 0.01\n\n## Limits and costs\n\nSearch snippets only. Collection timestamps are not publication dates. Source matching does not verify factual support. Evidence assessments, recommendations and conclusions require human review. Model charges are separate and not included in flashdata_credits.\n",
+    "report_schema_version": "2",
+    "question": "SYNTHETIC EXAMPLE — How should an example service deliver signed webhook events into self-hosted n8n?",
+    "context": "Illustrative fixture only: URLs, snippets, timestamps and Credits are synthetic. No live API or model was called; this is not advice about GitHub or another real provider.",
+    "preferred_sources": "Synthetic example.com snippets supplied by the test fixture.",
+    "country": "us",
+    "search_language": "en",
+    "requested_results_per_search": 5,
+    "evidence_status": "searches_recorded",
+    "tool_calls": 2,
+    "flashdata_credits": 0.02,
+    "summary": "Synthetic demonstration: signature handling and delivery identification need implementation checks; exact settings and retry guarantees remain unresolved.",
+    "findings": [
+      {
+        "topic": "Signature verification",
+        "finding": "The synthetic excerpt calls for verifying a signature against the original request body. It does not establish the header, algorithm or secret configuration.",
+        "assessment": "partial",
+        "source_ids": [
+          "S1R1"
+        ],
+        "source_urls": [
+          "https://example.com/webhook-verification"
+        ],
+        "next_action": "Read the actual provider documentation, confirm the signing scheme and preserve the original body before parsing.",
+        "verification": "After confirming the scheme, test a valid signature and a tampered payload; confirm the invalid payload is rejected before processing."
+      },
+      {
+        "topic": "Delivery identification",
+        "finding": "The synthetic excerpt states that deliveries include an identifier. It does not establish identifier reuse during retries.",
+        "assessment": "partial",
+        "source_ids": [
+          "S2R1"
+        ],
+        "source_urls": [
+          "https://example.com/webhook-delivery"
+        ],
+        "next_action": "Confirm identifier semantics before choosing a deduplication key and storage retention period.",
+        "verification": "Replay a permitted test delivery and inspect identifiers and side effects; define the expected behavior from the actual service contract."
+      },
+      {
+        "topic": "Retry and timeout policy",
+        "finding": "Retry intervals, timeout limits and retention guarantees are not established by the available snippets.",
+        "assessment": "not_established",
+        "source_ids": [],
+        "source_urls": [],
+        "next_action": "Inspect the provider delivery and retry documentation before selecting a queue or retention policy.",
+        "verification": "Record the documented limits and perform authorized failure/retry tests in a test environment; do not infer a numeric limit from search ranking."
+      }
+    ],
+    "open_questions": [
+      "Which exact signing header and algorithm apply? Check the actual provider documentation.",
+      "Are delivery identifiers reused on retries, and what retry window must the integration support? Verify the service contract before implementation."
+    ],
+    "sources": [
+      {
+        "id": "S1R1",
+        "url": "https://example.com/webhook-verification",
+        "title": "Example webhook verification guide — synthetic fixture",
+        "snippet": "Synthetic search fixture: validate the webhook signature against the original request body before processing an event. The excerpt does not name the header or algorithm.",
+        "position": 1,
+        "search_number": 1,
+        "result_number": 1,
+        "collected_at": "2026-10-21T00:00:00Z"
+      },
+      {
+        "id": "S2R1",
+        "url": "https://example.com/webhook-delivery",
+        "title": "Example delivery guide — synthetic fixture",
+        "snippet": "Synthetic search fixture: webhook deliveries include a delivery identifier. This excerpt does not establish retry timing or retention guarantees.",
+        "position": 1,
+        "search_number": 2,
+        "result_number": 1,
+        "collected_at": "2026-10-21T00:00:00Z"
+      }
+    ],
+    "limitations": "Search snippets only. Collection timestamps are not publication dates. Source matching does not verify factual support. Evidence assessments, recommendations and conclusions require human review. Model charges are separate and not included in flashdata_credits.",
+    "searches": [
+      {
+        "query": "example service webhook signature documentation",
+        "status": "results_returned",
+        "returned_count": 1,
+        "credits": 0.01,
+        "responses": [
+          {
+            "status": "done",
+            "results": [
+              {
+                "organic": [
+                  {
+                    "title": "Example webhook verification guide — synthetic fixture",
+                    "link": "https://example.com/webhook-verification",
+                    "snippet": "Synthetic search fixture: validate the webhook signature against the original request body before processing an event. The excerpt does not name the header or algorithm.",
+                    "position": 1
+                  }
+                ]
+              }
+            ],
+            "usage": {
+              "credits": 0.01
+            },
+            "created_at": "2026-10-21T00:00:00Z"
+          }
+        ]
+      },
+      {
+        "query": "example service webhook delivery retry documentation",
+        "status": "results_returned",
+        "returned_count": 1,
+        "credits": 0.01,
+        "responses": [
+          {
+            "status": "done",
+            "results": [
+              {
+                "organic": [
+                  {
+                    "title": "Example delivery guide — synthetic fixture",
+                    "link": "https://example.com/webhook-delivery",
+                    "snippet": "Synthetic search fixture: webhook deliveries include a delivery identifier. This excerpt does not establish retry timing or retention guarantees.",
+                    "position": 1
+                  }
+                ]
+              }
+            ],
+            "usage": {
+              "credits": 0.01
+            },
+            "created_at": "2026-10-21T00:00:00Z"
+          }
+        ]
+      }
+    ]
+  }
+]
