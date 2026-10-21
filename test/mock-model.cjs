@@ -2,6 +2,7 @@
 const http = require('node:http');
 const assert = require('node:assert/strict');
 const { appendFileSync } = require('node:fs');
+const { researchResults, researchReport } = require('./research-report-fixture.cjs');
 http
 	.createServer(async (req, res) => {
 		try {
@@ -40,7 +41,7 @@ http
 					observations.length < (scenario === 'EMPTY' || scenario === 'PAYMENT' ? 1 : 2))
 			) {
 				if (observations.length && scenario === 'NORMAL')
-					assert.match(observations[0].content, /Search fixture/);
+					assert.match(observations[0].content, /Synthetic search fixture/);
 				message = {
 					role: 'assistant',
 					content: null,
@@ -66,13 +67,12 @@ http
 				};
 			} else {
 				if (scenario === 'NORMAL')
-					assert.ok(observations.every((m) => m.content.includes('https://example.com/research')));
+					assert.ok(
+						observations.every((m, index) => m.content.includes(researchResults[index].link)),
+					);
 				message = {
 					role: 'assistant',
-					content:
-						scenario === 'NORMAL'
-							? '# Integration research brief\n\nThe synthetic snippet is a reading lead: [Example documentation](https://example.com/research).\n\n## Recommended next checks\nOpen the real documentation and test webhook delivery.\n\n## Open questions\nAuthentication details and delivery limits remain unverified. This fixture provides snippets only.'
-							: '# Open questions\n\nNo usable evidence was retrieved. Verify the documentation and account access before implementation.',
+					content: JSON.stringify(researchReport(scenario === 'NORMAL')),
 				};
 			}
 			const reply = {

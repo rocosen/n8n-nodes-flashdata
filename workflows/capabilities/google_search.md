@@ -1,10 +1,12 @@
-# Research API integrations with an AI Agent and Google Search
+# Build an API integration brief with an AI Agent and FlashData Google Search
 
 Before building an integration, developers often need to piece together authentication requirements, webhook events, setup steps and service limits across several documentation pages. This workflow turns that question into a cited research brief and a record of the searches behind it.
 
 ![Workflow layout](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/images/google_search_agent.png)
 
 [Download the workflow JSON](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/google_search.json)
+
+**Self-hosted n8n only.** [Inspect a complete synthetic output example](examples/google_search/README.md): the rendered brief and companion evidence JSON show the result format without requiring credentials or paid calls. It is a scripted demonstration, not live GitHub research or a real-model quality result.
 
 ## Who this is for
 
@@ -16,10 +18,11 @@ For example: **“How can I receive GitHub repository events in self-hosted n8n,
 
 1. Reads your question, project context and preferred sources.
 2. Chooses its own Google queries through the **Search Google with FlashData** tool. It can refine a query or investigate a missing detail after seeing the results.
-3. Writes a Markdown brief: supported findings with source links, a recommended implementation/test checklist and unresolved questions.
-4. Exports the brief and a companion JSON file preserving each search query, original API response, collection time and reported Credits.
+3. Returns a structured report with question-specific findings, evidence assessments, source URLs, recommended next actions, verification steps and open questions.
+4. Matches each cited URL to recorded successful search results and attaches the original returned snippets. It renders a Markdown evidence table and source excerpts, followed by an open-question checklist.
+5. Exports the brief and a companion JSON file preserving the structured findings, matched source IDs, each query, original API response, collection time and reported Credits.
 
-FlashData supplies structured Google Search results to the Agent. The model interprets the snippets; the workflow retains the evidence for a developer to inspect. This is a research step before implementation, not an automatic integration builder.
+FlashData supplies structured Google Search results to the Agent. The model chooses research dimensions and assesses the snippets; the workflow checks structure and source matching. Each finding is labeled `supported`, `partial`, `not_established` or `conflicting` **by the Agent**. Those labels are judgments, not automatic fact verification. This is a research step before implementation, not an automatic integration builder.
 
 ## Setup and run
 
@@ -51,10 +54,12 @@ FlashData supplies structured Google Search results to the Agent. The model inte
 
 | File | Contents | What to do with it |
 | --- | --- | --- |
-| `integration-research-brief.md` | Model-written findings with citations, recommended steps/tests, open questions, and a workflow-generated search execution record | Use as an implementation starting point; review the linked pages and verify every material requirement |
-| `integration-research-evidence.json` | A one-element report array containing the brief, original task, search queries, original responses, result counts and API Credits | Trace a claim to its source snippet and inspect what was actually retrieved |
+| `integration-research-brief.md` | A table of findings, Agent assessments, source IDs, next actions and verification steps; original source excerpts, open questions and search execution record | Review each requirement and turn its next action into an implementation or investigation task |
+| `integration-research-evidence.json` | A one-element report array containing structured findings, source IDs/URLs, original task, search queries/responses, counts and API Credits | Trace each source ID to a search/result and inspect the original snippet and response |
 
-Each search is marked `results_returned`, `no_results`, or `tool_error_or_incomplete_response`. These describe the observed tool response, not a model judgment of source quality. Missing usage remains unknown. If the Agent produces an answer without searching, the export explicitly says that no web evidence was recorded. Malformed evidence or missing Agent output stops the export instead of inventing a completed report.
+The report uses `report_schema_version: "2"`. Source IDs such as `S2R1` mean search 2, result 1. If the same URL appears in two searches, both occurrences and snippets remain available. A cited URL absent from successful results stops the export; a finding labeled supported/partial/conflicting must have at least one recorded snippet. These checks prevent missing or invented citations from looking complete, but they do not establish relevance, truth or whether a snippet actually supports the finding. Missing evidence must stay explicit. The report framing is English; the Agent's findings and actions use your requested `output_language`.
+
+Each search is marked `results_returned`, `no_results`, or `tool_error_or_incomplete_response`. These describe the observed tool response, not a model judgment of source quality. Missing usage remains unknown. If the Agent produces an answer without searching, the export explicitly says that no web evidence was recorded. Malformed evidence, invalid report JSON, unknown source URLs or missing Agent output stops the export instead of inventing a completed report. Inspect the saved execution first: rerunning the whole workflow may repeat paid searches. There is no automatic repair-model call or retry.
 
 A brief can legitimately conclude that the returned snippets do not establish the required permission, event name or limit. In that case, the valuable output is a list of documentation pages and concrete checks for the developer. The workflow does not automatically verify that citations support every model claim.
 
@@ -69,6 +74,8 @@ A brief can legitimately conclude that the returned snippets do not establish th
 
 ## Validation and availability
 
-The automated checks use synthetic search responses and a scripted local model with external networking disabled. They exercise the real n8n Agent → FlashData tool → follow-up search → file export path, including evidence preservation. They validate wiring and error handling, not real-model research quality or live search completeness. You need your own credentials to assess a real question.
+The automated checks use synthetic search responses and a scripted local model with external networking disabled. They exercise the real n8n Agent → FlashData tool → follow-up search → file export path, including evidence matching, rendering and preservation. Additional checks reject unrecorded citations, missing snippets and malformed reports; preserve repeated-URL evidence; and escape external text in Markdown. They validate wiring and error handling, not real-model research quality or live search completeness. You need your own credentials to assess a real question.
+
+The [synthetic example](examples/google_search/README.md) is generated using the same exported `Prepare output` code and shared test fixtures. Its URLs, excerpts, timestamps and usage are illustrative. They are not a live SERP, a price quote or technical guidance for a real provider. The [short listing description](google_search.listing.md) also appears in the workflow's main sticky note.
 
 The current JSON and guide are repository examples. They are not a public n8n template-library listing. Download the current JSON from this page: the already-published npm **0.2.1** contains an earlier template, although its FlashData node supports this workflow.

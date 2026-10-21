@@ -1,7 +1,18 @@
 // Representative API fixtures based on the product source-reference contract, not live responses.
+const { researchResults } = require('./research-report-fixture.cjs');
 function resultFor(body) {
 	if (body.source === 'google_search' && body.query === 'fixture-empty-search')
 		return { organic: [] };
+	if (
+		body.source === 'google_search' &&
+		body.query === 'n8n GitHub webhook authentication official docs'
+	)
+		return { organic: [researchResults[0]] };
+	if (
+		body.source === 'google_search' &&
+		body.query === 'GitHub webhook signature delivery limits official docs'
+	)
+		return { organic: [researchResults[1]] };
 	const video = {
 		videoId: 'dQw4w9WgXcQ',
 		title: body.query || 'Example video',
