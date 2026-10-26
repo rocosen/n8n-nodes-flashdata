@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-flashdata",
+	"node": "n8n-nodes-flashdata.flashdata",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Data & Storage", "Marketing & Content"],
