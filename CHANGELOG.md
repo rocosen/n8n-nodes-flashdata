@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2 (2026-10-26)
+
+- Correct the codex `node` identifier to `n8n-nodes-flashdata.flashdata` so n8n can associate the metadata with the existing node. Runtime node IDs and API behavior are unchanged.
+- Include the previously published Google Search API integration research Agent workflow, listing, and synthetic evidence examples in the package.
+
 ## 0.2.1 (2026-10-15)
 
 - Publish from the public `rocosen/n8n-nodes-flashdata` repository with GitHub Actions provenance.
