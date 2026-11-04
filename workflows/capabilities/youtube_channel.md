@@ -12,7 +12,7 @@ Create a channel-specific video inventory with IDs, dates, views and source link
 
 ## Setup
 
-1. Self-hosted n8n only while this community node awaits verification. Install `n8n-nodes-flashdata` version 0.2.0 or later.
+1. Install `n8n-nodes-flashdata` version 0.2.0 or later on self-hosted n8n, where this example was tested. FlashData 0.2.2 is also verified and available on n8n Cloud.
 2. Create a FlashData account, enable this source, and select your FlashData API credential on the data nodes.
 3. Edit **Configure task**, then execute manually and inspect **Prepare output** before downloading **Export file**.
 

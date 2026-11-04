@@ -57,10 +57,16 @@ Checked October 8, 2026:
 - [npm trusted publishing](https://docs.npmjs.com/trusted-publishers)
 
 
-## Updating the existing node application
+## Current node and template status
+
+Version 0.2.2 was approved on October 27, 2026 and published to n8n Cloud on October 28. The November 1 Creator Portal check showed `V0.2.2 LIVE`. Later npm releases must not be described as Cloud-approved without checking their own portal status.
+
+Template 20803 remains separate: it was returned for changes on October 29 and is not in the public template library. The other 14 examples have not been submitted. Do not create a duplicate application or resubmit an unchanged template.
+
+## Historical node remediation (October 15, 2026)
 
 The Creator Portal was checked on October 15, 2026: Automated Review Complete; Manual Review Changes Required. The reviewer inspected 0.2.0 provenance but could not reach the old source repository. Publish a validated patch with provenance pointing to the public `rocosen` repository, verify registry installation, then confirm the changes and use **Resubmit Package** on the same application. Do not create a duplicate submission or label the old video as a newer-version demonstration.
 
 ## Template submission requirements checked October 12, 2026
 
-[Official guidelines](https://n8n.notion.site/Template-submission-guidelines-9959894476734da3b402c90b124b1f77) require clear English task titles, practical original workflows, setup variables, and a sticky note containing the description. Community-node templates must say self-hosted only and include a workflow image at the top. Each file in `workflows/capabilities` has its own description and diagram. The portal starts with JSON upload, a free/paid choice, and agreement to template Terms; AI review precedes human review. The template agreement has not yet been accepted in this task. Track actual per-template submission receipts and public URLs in GTM.
+[Official guidelines](https://n8n.notion.site/Template-submission-guidelines-9959894476734da3b402c90b124b1f77) require clear English task titles, practical original workflows, setup variables, and a sticky note containing the description. Community-node templates must say self-hosted only and include a workflow image at the top. Each file in `workflows/capabilities` has its own description and diagram. The portal starts with JSON upload, a free/paid choice, and agreement to template Terms; AI review precedes human review. The agreement was accepted for the original template submission; acceptance does not mean approval. Track actual per-template submission receipts and public URLs in GTM.

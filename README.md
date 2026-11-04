@@ -2,11 +2,11 @@
 
 Search Google, monitor news, collect image and shopping results, find local businesses, retrieve YouTube transcripts and captions, inspect video and channel data, and deliver video or audio to your cloud storage. One FlashData API credential connects all **15 sources** to n8n.
 
-**n8n verification is pending.** Self-hosted users can install the community package; n8n Cloud/node-panel availability requires approval. The task workflows below are repository examples, not yet published template-library listings.
+**FlashData is a verified n8n community node.** Version 0.2.2 was published to n8n Cloud on October 28, 2026. Self-hosted users can also install the package. The task workflows below are repository examples, not yet published template-library listings.
 
 ## Install and connect
 
-1. In self-hosted n8n, open **Settings → Community nodes → Install** and enter `n8n-nodes-flashdata`.
+1. On n8n Cloud, add **FlashData** from the node panel using the available verified version. In self-hosted n8n, open **Settings → Community nodes → Install** and enter `n8n-nodes-flashdata`.
 2. Create a [FlashData account](https://flashdata.dev/?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=account-setup), enable the sources you need, and create an API key.
 3. Create a **FlashData API** credential in n8n, paste the key, and test the connection. The test calls `GET https://api.flashdata.dev/v2/api-access` and does not consume query Credits.
 4. Import a task workflow below, select your credential, edit **Configure task**, and run it manually. Every template starts inactive and includes setup notes.

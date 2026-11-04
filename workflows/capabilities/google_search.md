@@ -6,7 +6,7 @@ Before building an integration, developers often need to piece together authenti
 
 [Download the workflow JSON](https://raw.githubusercontent.com/rocosen/n8n-nodes-flashdata/main/workflows/capabilities/google_search.json)
 
-**Self-hosted n8n only.** [Inspect a complete synthetic output example](examples/google_search/README.md): the rendered brief and companion evidence JSON show the result format without requiring credentials or paid calls. It is a scripted demonstration, not live GitHub research or a real-model quality result.
+**Validated on self-hosted n8n.** [Inspect a complete synthetic output example](examples/google_search/README.md): the rendered brief and companion evidence JSON show the result format without requiring credentials or paid calls. It is a scripted demonstration, not live GitHub research or a real-model quality result.
 
 ## Who this is for
 
@@ -26,7 +26,7 @@ FlashData supplies structured Google Search results to the Agent. The model choo
 
 ## Setup and run
 
-1. Use self-hosted n8n and install `n8n-nodes-flashdata` **0.2.1 or later** in **Settings → Community nodes**. Node verification is pending; n8n Cloud availability is not confirmed. This workflow targets n8n **2.42.5**.
+1. Use self-hosted n8n and install `n8n-nodes-flashdata` **0.2.1 or later** in **Settings → Community nodes**. FlashData 0.2.2 is also verified and available on n8n Cloud; this workflow has not been separately validated there. This workflow targets n8n **2.42.5**.
 2. [Create a FlashData account](https://flashdata.dev/?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-account), enable **Google Search**, add sufficient Credits and create an API Key. Read the [Google Search setup and API contract](https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-template).
 3. Import the JSON. On **Search Google with FlashData**, select a **FlashData API** credential containing your key. Keep credentials in n8n's credential store.
 4. On **Chat model**, select your OpenAI credential and a tool-calling model available to your account. The included `gpt-4.1-mini` is an editable example. You may replace the model node with another compatible provider; recheck its options and tool-calling behavior. Keep built-in web-search tools off if you want the attached FlashData tool to be the only search provider.
@@ -78,4 +78,4 @@ The automated checks use synthetic search responses and a scripted local model w
 
 The [synthetic example](examples/google_search/README.md) is generated using the same exported `Prepare output` code and shared test fixtures. Its URLs, excerpts, timestamps and usage are illustrative. They are not a live SERP, a price quote or technical guidance for a real provider. The [short listing description](google_search.listing.md) also appears in the workflow's main sticky note.
 
-The current JSON and guide are repository examples. They are not a public n8n template-library listing. Download the current JSON from this page: the already-published npm **0.2.1** contains an earlier template, although its FlashData node supports this workflow.
+The current JSON and guide are repository examples. They are not a public n8n template-library listing. Download the current JSON from this page or use the copy included in npm **0.2.2 or later**.

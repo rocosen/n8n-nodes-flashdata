@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3 (2026-11-04)
+
+- Correct the README, setup guides and workflow notes to reflect the verified 0.2.2 node published to n8n Cloud on October 28.
+- Keep node verification separate from unpublished workflow templates and from approval of later npm versions.
+- Documentation-only patch; runtime code, credentials, workflow execution, dependencies and billing are unchanged.
+
 ## 0.2.2 (2026-10-26)
 
 - Correct the codex `node` identifier to `n8n-nodes-flashdata.flashdata` so n8n can associate the metadata with the existing node. Runtime node IDs and API behavior are unchanged.
