@@ -7,7 +7,7 @@ Search Google, monitor news, collect image and shopping results, find local busi
 ## Install and connect
 
 1. On n8n Cloud, add **FlashData** from the node panel using the available verified version. In self-hosted n8n, open **Settings → Community nodes → Install** and enter `n8n-nodes-flashdata`.
-2. Create a [FlashData account](https://flashdata.dev/?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=account-setup), enable the sources you need, and create an API key.
+2. Create a [FlashData account](https://flashdata.dev/signup?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=account-setup), enable the sources you need, and create an API key.
 3. Create a **FlashData API** credential in n8n, paste the key, and test the connection. The test calls `GET https://api.flashdata.dev/v2/api-access` and does not consume query Credits.
 4. Import a task workflow below, select your credential, edit **Configure task**, and run it manually. Every template starts inactive and includes setup notes.
 
@@ -33,7 +33,7 @@ Search Google, monitor news, collect image and shopping results, find local busi
 
 ## Credentials and costs
 
-The API key stays in n8n's encrypted credential store and is sent only to FlashData in `X-API-Key`. A successful connection test proves authentication, not access to every source. Queries consume your account's [Credits](https://flashdata.dev/pricing); this package and its templates add no fee. Google pages are separate paid queries. Extended YouTube search has a separate source/rate. Downloads reserve Credits and settle by actual delivered bytes.
+The API key stays in n8n's encrypted credential store and is sent only to FlashData in `X-API-Key`. A successful connection test proves authentication, not access to every source. Queries consume your account's [Credits](https://flashdata.dev/pricing?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=readme-pricing); this package and its templates add no fee. Google pages are separate paid queries. Extended YouTube search has a separate source/rate. Downloads reserve Credits and settle by actual delivered bytes.
 
 For downloads, set **Download Storage JSON** in that same encrypted credential. Follow the [storage setup guide](workflows/capabilities/storage.md). Never put storage secrets in workflow parameters, Set nodes, descriptions, or shared JSON. You can keep a separate named FlashData credential for each destination.
 

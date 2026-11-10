@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.4 (2026-11-10)
+
+- Link account setup directly to signup and preserve n8n attribution on registration and pricing links in the README, task guides and workflow notes.
+- Preserve the task source when opening signup or pricing directly from a capability guide.
+- Documentation-only patch; node runtime, credentials, workflow execution and dependencies are unchanged.
+
 ## 0.2.3 (2026-11-04)
 
 - Correct the README, setup guides and workflow notes to reflect the verified 0.2.2 node published to n8n Cloud on October 28.
