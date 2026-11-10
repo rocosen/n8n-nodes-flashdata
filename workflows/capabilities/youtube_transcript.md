@@ -13,14 +13,14 @@ Convert existing timestamped subtitle segments into a portable VTT subtitle file
 ## Setup
 
 1. Install `n8n-nodes-flashdata` version 0.2.0 or later on self-hosted n8n, where this example was tested. FlashData 0.2.2 is also verified and available on n8n Cloud.
-2. Create a FlashData account, enable this source, and select your FlashData API credential on the data nodes.
+2. [Create a FlashData account](https://flashdata.dev/signup?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_transcript-task), enable this source, and select your FlashData API credential on the data nodes.
 3. Edit **Configure task**, then execute manually and inspect **Prepare output** before downloading **Export file**.
 
 ## Requirements and customization
 
 FlashData queries consume Credits; the template itself is free. Select a language actually available on the video. Automatic captions are selected by default. No ASR, translation, or fallback to another track occurs. Adjust the task inputs and transformation for your own dataset. An empty matching track stops before export; choose an available track. Treat retrieved titles, descriptions and links as external data.
 
-[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_transcript?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_transcript-template) · [Current pricing](https://flashdata.dev/pricing)
+[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_transcript?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_transcript-template) · [Current pricing](https://flashdata.dev/pricing?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_transcript-task)
 
 ## Input example
 

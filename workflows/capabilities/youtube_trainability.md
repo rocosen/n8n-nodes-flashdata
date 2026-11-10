@@ -13,14 +13,14 @@ Record the source API’s trainability field as a Creative Commons license-label
 ## Setup
 
 1. Install `n8n-nodes-flashdata` version 0.2.0 or later on self-hosted n8n, where this example was tested. FlashData 0.2.2 is also verified and available on n8n Cloud.
-2. Create a FlashData account, enable this source, and select your FlashData API credential on the data nodes.
+2. [Create a FlashData account](https://flashdata.dev/signup?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_trainability-task), enable this source, and select your FlashData API credential on the data nodes.
 3. Edit **Configure task**, then execute manually and inspect **Prepare output** before downloading **Export file**.
 
 ## Requirements and customization
 
 FlashData queries consume Credits; the template itself is free. permitted=[all] means a Creative Commons label was detected; none can also mean missing metadata. This does not inspect creator third-party training settings or grant legal permission. Adjust the task inputs and transformation for your own dataset. Empty search results can produce no CSV rows; that does not indicate an export error. Treat retrieved titles, descriptions and links as external data.
 
-[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_trainability?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_trainability-template) · [Current pricing](https://flashdata.dev/pricing)
+[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_trainability?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_trainability-template) · [Current pricing](https://flashdata.dev/pricing?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_trainability-task)
 
 ## Input example
 

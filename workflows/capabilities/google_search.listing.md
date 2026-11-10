@@ -18,4 +18,4 @@ Install `n8n-nodes-flashdata` 0.2.1 or later, import the workflow, and select Fl
 
 The template is free; searches and model calls are billed separately. Google Search returns snippets, not full documentation. Review cited pages before implementation. Missing evidence remains an open question; the workflow does not build or test the integration. Iteration limits are not a hard spending cap.
 
-[Setup guide](https://github.com/rocosen/n8n-nodes-flashdata/blob/main/workflows/capabilities/google_search.md) · [Synthetic output example](https://github.com/rocosen/n8n-nodes-flashdata/tree/main/workflows/capabilities/examples/google_search) · [Google Search API](https://flashdata.dev/docs/sources/google_search)
+[Setup guide](https://github.com/rocosen/n8n-nodes-flashdata/blob/main/workflows/capabilities/google_search.md) · [Synthetic output example](https://github.com/rocosen/n8n-nodes-flashdata/tree/main/workflows/capabilities/examples/google_search) · [Google Search API](https://flashdata.dev/docs/sources/google_search?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=google_search-task)

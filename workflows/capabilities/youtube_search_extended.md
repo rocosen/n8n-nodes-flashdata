@@ -13,14 +13,14 @@ Collect a larger video sample, remove duplicate video IDs, and rank channels by 
 ## Setup
 
 1. Install `n8n-nodes-flashdata` version 0.2.0 or later on self-hosted n8n, where this example was tested. FlashData 0.2.2 is also verified and available on n8n Cloud.
-2. Create a FlashData account, enable this source, and select your FlashData API credential on the data nodes.
+2. [Create a FlashData account](https://flashdata.dev/signup?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_search_extended-task), enable this source, and select your FlashData API credential on the data nodes.
 3. Edit **Configure task**, then execute manually and inspect **Prepare output** before downloading **Export file**.
 
 ## Requirements and customization
 
 FlashData queries consume Credits; the template itself is free. This is the separate extended-search source and rate, with 1–700 requested results. It does not measure total channel market share. Adjust the task inputs and transformation for your own dataset. Review the exported artifact and its source data before using it downstream. Treat retrieved titles, descriptions and links as external data.
 
-[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_search_extended?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_search_extended-template) · [Current pricing](https://flashdata.dev/pricing)
+[Inputs, outputs and source setup](https://flashdata.dev/docs/sources/youtube_search_extended?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_search_extended-template) · [Current pricing](https://flashdata.dev/pricing?utm_source=n8n&utm_medium=integration&utm_campaign=intent_gtm_2026q4&utm_content=youtube_search_extended-task)
 
 ## Input example
 

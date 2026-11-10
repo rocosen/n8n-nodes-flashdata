@@ -59,7 +59,7 @@ Checked October 8, 2026:
 
 ## Current node and template status
 
-Version 0.2.2 was approved on October 27, 2026 and published to n8n Cloud on October 28. The November 1 Creator Portal check showed `V0.2.2 LIVE`. Later npm releases must not be described as Cloud-approved without checking their own portal status.
+Version 0.2.2 was approved on October 27, 2026 and published to n8n Cloud on October 28. The November 1 Creator Portal check showed `V0.2.2 LIVE`; the November 10 check confirmed `V0.2.3 LIVE`. Later npm releases must not be described as Cloud-approved without checking their own portal status.
 
 Template 20803 remains separate: it was returned for changes on October 29 and is not in the public template library. The other 14 examples have not been submitted. Do not create a duplicate application or resubmit an unchanged template.
 
